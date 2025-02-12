@@ -1,0 +1,24 @@
+﻿@model BloodCenter.Models.ViewModels.BloodDonorViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на кръводарител";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Сигурни ли сте, че искате да изтриете този кръводарител?</h3>
+<div>
+    <p><strong>Потребителско име:</strong> @Model.UserName</p>
+    <p><strong>Email:</strong> @Model.Email</p>
+    <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
+    <p><strong>Възраст:</strong> @Model.Age</p>
+    <p><strong>Резус фактор:</strong> @(Model.RhesusFactor == '+' ? "Положителен (+)" : "Отрицателен (-)")</p>
+    <p><strong>Контакти:</strong> @Model.Contacts</p>
+</div>
+
+<form asp-action="DeleteBloodDonor" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+    <a asp-action="Admin" asp-controller="AdminPanel" class="btn btn-secondary">Отказ</a>
+</form>
+
