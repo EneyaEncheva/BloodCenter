@@ -8,44 +8,44 @@
 
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditBloodDonor">
+        <form method="post" asp-action="EditBloodDonor">
             <h2>Редактиране.</h2>
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="UserName"></label>
-                <input asp-for="UserName" class="form-control" required />
                 <label asp-for="UserName">Потребителско име</label>
+                <input asp-for="UserName" class="form-control" required />
                 <span asp-validation-for="UserName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" type="email" class="form-control" required />
                 <label asp-for="Email">Имейл</label>
+                <input asp-for="Email" type="email" class="form-control" required />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="FirstName"></label>
-                <input asp-for="FirstName" class="form-control" required />
                 <label asp-for="FirstName">Име</label>
+                <input asp-for="FirstName" class="form-control" required />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="LastName"></label>
-                <input asp-for="LastName" class="form-control" required />
                 <label asp-for="LastName">Фамилия</label>
+                <input asp-for="LastName" class="form-control" required />
                 <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewPassword">Нова Парола</label>
+                <input asp-for="NewPassword" class="form-control" required />
+                <span asp-validation-for="NewPassword" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Age"></label>
-                <input asp-for="Age" type="number" class="form-control" required min="18" />
                 <label asp-for="Age">Възраст</label>
+                <input asp-for="Age" type="number" class="form-control" required min="18" />
                 <span asp-validation-for="Age" class="text-danger"></span>
             </div>
 
@@ -70,8 +70,11 @@
                 <label asp-for="Contacts">Контакти</label>
                 <span asp-validation-for="Contacts" class="text-danger"></span>
             </div>
+            
+            <input type="hidden" asp-for="Password" value="@Model.Password" />
 
             <button type="submit" class="btn btn-primary">Запази</button>
+            <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
         </form>
     </div>
 </div>

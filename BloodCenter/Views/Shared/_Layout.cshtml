@@ -25,6 +25,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminPanel">Кръводарители</a>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -38,7 +41,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="col-lg-3 col-md-6 d-flex">
+        @* <div class="col-lg-3 col-md-6 d-flex">
             <i class="bi bi-clock icon"></i>
             <div>
                 <h4>Работно време</h4>
@@ -48,7 +51,7 @@
                     <strong>Неделя:</strong> <span>Почивен ден</span>
                 </p>
             </div>
-        </div>
+        </div> *@
         <div class="container">
             &copy; 2025 - Кръводарителски център - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

@@ -23,13 +23,16 @@ namespace BloodCenter
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.Configure<IdentityOptions>(options =>
             {
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+                                            "àáâãäå¸æçèéêëìíîïğñòóôõö÷øùúûüışÿÀÁÂÃÄÅ¨ÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖ×ØÙÚÛÜİŞß" +
+                                            "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ ";
+
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequiredLength = 6;
 
-                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-._@+";
                 options.User.RequireUniqueEmail = false;
             });
 

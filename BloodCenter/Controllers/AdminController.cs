@@ -24,20 +24,26 @@ namespace BloodCenter.Controllers
         }
         public IActionResult AdminPanel()
         {
-            return View();
+            var bloodDonors = _context.BloodDonors
+                .Include(x => x.User)
+                .Include(x => x.BloodGroup)
+                .ToList();
+
+            return View(bloodDonors);
         }
+
         public IActionResult AddBloodDonor()
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
 
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> AddBloodDonor(BloodDonorViewModel addBloodDonor)
         {
             if (ModelState.IsValid)
             {
-
                 ApplicationUser user = new ApplicationUser()
                 {
                     UserName = addBloodDonor.UserName,
@@ -63,12 +69,12 @@ namespace BloodCenter.Controllers
                     await _context.SaveChangesAsync();
                 }
                 ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Name", "Name");
-                return RedirectToAction("Admin", "AdminPanel");
+                return RedirectToAction("AdminPanel", "Admin");
             }
             return View(addBloodDonor);
         }
 
-
+        [HttpGet]
         public IActionResult EditBloodDonor(int id)
         {
             var bloodDonor = _context.BloodDonors
@@ -88,6 +94,7 @@ namespace BloodCenter.Controllers
                 FirstName = bloodDonor.User.FirstName,
                 LastName = bloodDonor.User.LastName,
                 Age = bloodDonor.Age,
+                Password = "CANNOT BE NULL",
                 BloodGroupsId = bloodDonor.BloodGroupId,
                 RhesusFactor = bloodDonor.RhesusFactor,
                 Contacts = bloodDonor.Contacts
@@ -99,17 +106,18 @@ namespace BloodCenter.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditBloodDonor(int id, BloodDonorViewModel model)
+        public async Task<IActionResult> EditBloodDonor(BloodDonorViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name", model.BloodGroupsId);
+
                 return View(model);
             }
 
             var bloodDonor = _context.BloodDonors
                 .Include(bd => bd.User)
-                .FirstOrDefault(bd => bd.Id == id);
+                .FirstOrDefault(bd => bd.Id == model.Id);
 
             if (bloodDonor == null)
             {
@@ -121,6 +129,12 @@ namespace BloodCenter.Controllers
             bloodDonor.User.Email = model.Email;
             bloodDonor.User.FirstName = model.FirstName;
             bloodDonor.User.LastName = model.LastName;
+            if (model.NewPassword != null)
+            {
+                await _userManager.RemovePasswordAsync(bloodDonor.User);
+                await _userManager.AddPasswordAsync(bloodDonor.User, model.NewPassword);
+
+            }
 
             // Обновяване на кръводарителя
             bloodDonor.Age = model.Age;
@@ -128,10 +142,11 @@ namespace BloodCenter.Controllers
             bloodDonor.RhesusFactor = model.RhesusFactor;
             bloodDonor.Contacts = model.Contacts;
 
+            _context.Users.Update(bloodDonor.User);
             _context.BloodDonors.Update(bloodDonor);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Admin", "AdminPanel");
+            return RedirectToAction("AdminPanel", "Admin");
         }
 
         public IActionResult DeleteBloodDonor(int id)
@@ -177,7 +192,44 @@ namespace BloodCenter.Controllers
             _context.Users.Remove(bloodDonor.User); // Изтриваме и свързания потребител
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Admin", "AdminPanel");
+            return RedirectToAction("AdminPanel", "Admin");
+        }
+
+
+
+
+        //Медицински специалист
+        public IActionResult AddMedicalSpecialist()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddMedicalSpecialist(UserViewModel userViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+
+                ApplicationUser user = new ApplicationUser()
+                {
+                    UserName = userViewModel.UserName,
+                    Email = userViewModel.Email,
+                    FirstName = userViewModel.FirstName,
+                    LastName = userViewModel.LastName,
+                };
+                var result = await _userManager.CreateAsync(user, userViewModel.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, Role.MedicalSpecialist.ToString());
+
+
+                    //await _context.BloodDonors.AddAsync(bloodDonor);
+                    await _context.SaveChangesAsync();
+                }
+                //ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Name", "Name");
+                return RedirectToAction("AdminPanel", "Admin");
+            }
+            return View(userViewModel);
         }
     }
 }
