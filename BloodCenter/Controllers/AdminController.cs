@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BloodCenter.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -44,6 +46,19 @@ namespace BloodCenter.Controllers
         {
             if (ModelState.IsValid)
             {
+                var existingUser = await _userManager.FindByNameAsync(addBloodDonor.UserName);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("UserName", "Това потребителско име вече съществува!");
+                    return View("AddBloodDonor", addBloodDonor);
+                }
+
+                var existingEmail = await _userManager.FindByEmailAsync(addBloodDonor.Email);
+                if (existingEmail != null)
+                {
+                    ModelState.AddModelError("Email", "Този имейл вече се използва!");
+                    return View("AddBloodDonor", addBloodDonor);
+                }
                 ApplicationUser user = new ApplicationUser()
                 {
                     UserName = addBloodDonor.UserName,
@@ -94,7 +109,7 @@ namespace BloodCenter.Controllers
                 FirstName = bloodDonor.User.FirstName,
                 LastName = bloodDonor.User.LastName,
                 Age = bloodDonor.Age,
-                Password = "CANNOT BE NULL",
+                //Password = "CANNOT BE NULL",
                 BloodGroupsId = bloodDonor.BloodGroupId,
                 RhesusFactor = bloodDonor.RhesusFactor,
                 Contacts = bloodDonor.Contacts
@@ -122,6 +137,22 @@ namespace BloodCenter.Controllers
             if (bloodDonor == null)
             {
                 return NotFound();
+            }
+
+            //Проверка за съществуващо потребителско име, но не проверяваме текущото
+            var existingUserName = await _userManager.FindByNameAsync(model.UserName);
+            if (existingUserName != null && existingUserName.Id != bloodDonor.UserId)
+            {
+                ModelState.AddModelError("UserName", "Това потребителско име вече съществува!");
+                return View(model);
+            }
+
+            //Проверка за съществуващ имейл, но не проверяваме текущия
+            var existingEmail = await _userManager.FindByEmailAsync(model.Email);
+            if (existingEmail != null && existingEmail.Id != bloodDonor.UserId)
+            {
+                ModelState.AddModelError("Email", "Този имейл вече се използва!");
+                return View(model);
             }
 
             // Обновяване на потребителските данни
@@ -196,40 +227,158 @@ namespace BloodCenter.Controllers
         }
 
 
+        //История на даренията
+
+        public async Task<IActionResult> History()
+        {
+            var donations = await _context.DonationHistories
+                .Include(d => d.BloodDonor)
+                .ToListAsync();
+
+            return View(donations);
+        }
+
+        public async Task<IActionResult> DonationHistory(int id)
+        {
+            var donor = await _context.BloodDonors
+                .Include(d => d.DonationHistory)
+                .FirstOrDefaultAsync(d => d.Id == id);
+
+            if (donor == null)
+            {
+                return NotFound();
+            }
+
+            return View(donor);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddDonation(int bloodDonorId, double quantity)
+        {
+            var bloodDonor = await _context.BloodDonors.FindAsync(bloodDonorId);
+            if (bloodDonor == null)
+            {
+                return NotFound("Кръводарителят не е намерен.");
+            }
+
+            var donation = new DonationHistory
+            {
+                BloodDonorId = bloodDonorId,
+                DonationDate = DateTime.Now,
+                Quantity = quantity
+            };
+
+            _context.DonationHistories.Add(donation);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("History", new { id = bloodDonorId });
+        }
 
 
         //Медицински специалист
+        public IActionResult MedicalSpecialist()
+        {
+            return View();
+        }
         public IActionResult AddMedicalSpecialist()
         {
             return View();
         }
+
         [HttpPost]
-        public async Task<IActionResult> AddMedicalSpecialist(UserViewModel userViewModel)
+        public async Task<IActionResult> AddMedicalSpecialist(UserViewModel addMedicalSpecialist)
         {
             if (ModelState.IsValid)
             {
-
+                //var existingUser = await _userManager.FindByNameAsync(addMedicalSpecialist.UserName);
+                //if (existingUser != null)
+                //{
+                //    ModelState.AddModelError("UserName", "Това потребителско име вече съществува!");
+                //    return View("MedicalSpecialist/AddMedicalSpecialist", addMedicalSpecialist);
+                //}
                 ApplicationUser user = new ApplicationUser()
                 {
-                    UserName = userViewModel.UserName,
-                    Email = userViewModel.Email,
-                    FirstName = userViewModel.FirstName,
-                    LastName = userViewModel.LastName,
+                    UserName = addMedicalSpecialist.UserName,
+                    Email = addMedicalSpecialist.Email,
+                    FirstName = addMedicalSpecialist.FirstName,
+                    LastName = addMedicalSpecialist.LastName,
                 };
-                var result = await _userManager.CreateAsync(user, userViewModel.Password);
+                var result = await _userManager.CreateAsync(user, addMedicalSpecialist.Password);
 
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, Role.MedicalSpecialist.ToString());
-
-
-                    //await _context.BloodDonors.AddAsync(bloodDonor);
                     await _context.SaveChangesAsync();
                 }
-                //ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Name", "Name");
-                return RedirectToAction("AdminPanel", "Admin");
+                return RedirectToAction("MedicalSpecialist", "Admin");
             }
-            return View(userViewModel);
+            return View(addMedicalSpecialist);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> EditMedicalSpecialist(string id)
+        {
+            //var medicalSpecialist = _context.Users.FirstOrDefault(x => x.Id == id);
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null || !await _userManager.IsInRoleAsync(user, Role.MedicalSpecialist.ToString()))
+            {
+                return NotFound();
+            }
+
+            var model = new UserViewModel
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditMedicalSpecialist(string id, UserViewModel model)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null || !await _userManager.IsInRoleAsync(user, Role.MedicalSpecialist.ToString()))
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("MedicalSpecialist", "Admin");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
     }
 }

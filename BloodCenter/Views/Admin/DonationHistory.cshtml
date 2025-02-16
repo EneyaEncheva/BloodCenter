@@ -1,0 +1,25 @@
+﻿@* @model BloodDonors
+
+<h2>История на даренията за @Model.User.FirstName @Model.User.LastName</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Дата на дарение</th>
+            <th>Количество (мл)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var donation in Model.DonationHistory)
+        {
+            <tr>
+                <td>@donation.DonationDate.ToShortDateString()</td>
+                <td>@donation.Quantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-action="AddDonation" asp-route-bloodDonorId="@Model.Id">Добави дарение</a>
+
+ *@

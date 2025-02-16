@@ -1,0 +1,15 @@
+﻿@model DonationHistory
+
+<h2>Добавяне на дарение</h2>
+
+<form asp-action="AddDonation" method="post">
+    <input type="hidden" asp-for="BloodDonorId" />
+
+    <div class="form-group">
+        <label>Количество (мл)</label>
+        <input type="number" class="form-control" asp-for="Quantity" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Запази</button>
+</form>
+

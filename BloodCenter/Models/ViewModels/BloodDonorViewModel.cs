@@ -12,6 +12,7 @@ namespace BloodCenter.Models.ViewModels
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Имейл")]
+        [EmailAddress(ErrorMessage = "Невалиден имейл адрес!")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Име")]

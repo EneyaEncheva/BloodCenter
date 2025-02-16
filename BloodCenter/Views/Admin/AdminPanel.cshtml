@@ -1,44 +1,51 @@
 ﻿@model List<BloodDonors>
 
-<section class="section-container">
-    <div class="container-text text-title">
-        <h1>Админ панел</h1>
-    </div>
+@if (User.IsInRole("Admin"))
+{
+    <section class="section-container">
+        <div class="container-text text-title">
+            <h1>Кръводарители</h1>
+        </div>
+        <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
 
-    <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
-
-    <table class="table">
-        <tr>
-            <th>id</th>
-            <th>Потребителско име</th>
-            <th>Имейл</th>
-            <th>Име</th>
-            <th>Фамилия</th>
-            <th>Възраст</th>
-            <th>Кръвна група</th>
-            <th>Резус-фактор</th>
-            <th>Контакти</th>
-            <th>Options</th>
-
-
-        </tr>
-        @foreach (var bloodDonor in Model)
-        {
+        <table class="table">
             <tr>
-                <th>@bloodDonor.Id</th>
-                <th>@bloodDonor.User.UserName</th>
-                <th>@bloodDonor.User.Email</th>
-                <th>@bloodDonor.User.FirstName</th>
-                <th>@bloodDonor.User.LastName</th>
-                <th>@bloodDonor.Age</th>
-                <th>@bloodDonor.BloodGroup.Name</th>
-                <th>@bloodDonor.RhesusFactor</th>
-                <th>@bloodDonor.Contacts</th>
-                <th>
-                    <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
-                    <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>
-                </th>
+                <th>Id</th>
+                <th>Потребителско име</th>
+                <th>Електронна поща</th>
+                <th>Име</th>
+                <th>Фамилия</th>
+                <th>Възраст</th>
+                <th>Кръвна група</th>
+                <th>Резус-фактор</th>
+                <th>Контакти</th>
+                <th>Опции</th>
             </tr>
-        }
-    </table>
-</section>
+            @if (Model == null)
+            {
+                <p class="text-danger">Няма налични кръводарители.</p>
+                return;
+            }
+            @foreach (var bloodDonor in Model)
+            {
+                <tr>
+                    <th>@bloodDonor.Id</th>
+                    <th>@bloodDonor.User.UserName</th>
+                    <th>@bloodDonor.User.Email</th>
+                    <th>@bloodDonor.User.FirstName</th>
+                    <th>@bloodDonor.User.LastName</th>
+                    <th>@bloodDonor.Age</th>
+                    <th>@bloodDonor.BloodGroup.Name</th>
+                    <th>@bloodDonor.RhesusFactor</th>
+                    <th>@bloodDonor.Contacts</th>
+                    <th>
+                        <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
+                        <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>
+                        <a class="btn btn-success" asp-controller="Admin" asp-action="AddDonation" asp-route-bloodDonorId="@bloodDonor.Id">Добави дарение</a>
+
+                    </th>
+                </tr>
+            }
+        </table>
+    </section>
+}

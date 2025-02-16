@@ -16,5 +16,6 @@ namespace BloodCenter.Data
         public DbSet<BloodGroups> BloodGroups { get; set; }
         public DbSet<Availability> Availability { get; set; }
         public DbSet<Requests> Requests { get; set; }
+        public DbSet<DonationHistory> DonationHistories { get; set; }
     }
 }

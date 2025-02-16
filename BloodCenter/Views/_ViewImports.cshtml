@@ -1,4 +1,8 @@
 ﻿@using BloodCenter
 @using BloodCenter.Models
 @using BloodCenter.Models.ViewModels
+@using Microsoft.AspNetCore.Identity
+@using BloodCenter.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
