@@ -1,6 +1,6 @@
 ﻿@model List<BloodDonors>
 
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
 {
     <section class="section-container">
         <div class="container-text text-title">
@@ -41,7 +41,7 @@
                     <th>
                         <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
                         <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>
-                        <a class="btn btn-success" asp-controller="Admin" asp-action="AddDonation" asp-route-bloodDonorId="@bloodDonor.Id">Добави дарение</a>
+                        @* <a class="btn btn-success" asp-controller="Admin" asp-action="AddDonation" asp-route-bloodDonorId="@bloodDonor.Id">Добави дарение</a> *@
 
                     </th>
                 </tr>

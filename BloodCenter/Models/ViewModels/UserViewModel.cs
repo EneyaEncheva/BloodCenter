@@ -4,7 +4,7 @@ namespace BloodCenter.Models.ViewModels
 {
     public class UserViewModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Потребителско име")]
         public string UserName { get; set; }

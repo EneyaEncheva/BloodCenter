@@ -1,4 +1,4 @@
-﻿@* @model  *@
+﻿@model IEnumerable<ApplicationUser>
 
 @if (User.IsInRole("Admin"))
 {
@@ -27,10 +27,10 @@
             {
                 <tr>
                     <th>@medicalSpecialist.Id</th>
-                    <th>@medicalSpecialist.User.UserName</th>
-                    <th>@medicalSpecialist.User.Email</th>
-                    <th>@medicalSpecialist.User.FirstName</th>
-                    <th>@medicalSpecialist.User.LastName</th>
+                    <th>@medicalSpecialist.UserName</th>
+                    <th>@medicalSpecialist.Email</th>
+                    <th>@medicalSpecialist.FirstName</th>
+                    <th>@medicalSpecialist.LastName</th>
                     <th>
                         <a class="btn btn-warning" asp-controller="Admin" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Edit</a>
                         <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@medicalSpecialist.Id">Delete</a>

@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<DonationHistory>
 
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
 {
     <section class="section-container">
         <div class="container-text text-title">
-            <h1>История</h1>
+            <h1>История на даренията</h1>
         </div>
         <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddDonation">Добави дарение</a>
 
@@ -27,7 +27,7 @@
             {
                 <tr>
                     <th>@donationHistory.Id</th>
-                    <th>@donationHistory.BloodDonor</th>
+                    <th>@donationHistory.BloodDonor.Id</th>@* ??? *@
                     <th>@donationHistory.DonationDate.ToShortDateString()</th>
                     <th>@donationHistory.Quantity ml</th>
                     <th>

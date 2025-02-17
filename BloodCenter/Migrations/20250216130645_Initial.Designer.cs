@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250204105016_Init")]
-    partial class Init
+    [Migration("20250216130645_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,30 +98,6 @@ namespace BloodCenter.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("BloodCenter.Models.Availability", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BloodDonorsId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BloodDonorsId");
-
-                    b.ToTable("Availability");
-                });
-
             modelBuilder.Entity("BloodCenter.Models.BloodDonors", b =>
                 {
                     b.Property<int>("Id")
@@ -132,9 +108,6 @@ namespace BloodCenter.Migrations
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("BloodGroupId")
                         .HasColumnType("int");
@@ -147,11 +120,15 @@ namespace BloodCenter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("BloodGroupId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("BloodDonors");
                 });
@@ -171,6 +148,30 @@ namespace BloodCenter.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BloodGroups");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.DonationHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BloodDonorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DonationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodDonorId");
+
+                    b.ToTable("DonationHistories");
                 });
 
             modelBuilder.Entity("BloodCenter.Models.Requests", b =>
@@ -202,6 +203,34 @@ namespace BloodCenter.Migrations
                     b.HasIndex("BloodGroupsId");
 
                     b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.Supply", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BloodGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Quantity")
+                        .HasColumnType("float");
+
+                    b.Property<string>("RhesusFactor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BloodGroupId");
+
+                    b.ToTable("Supplies");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -341,30 +370,34 @@ namespace BloodCenter.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BloodCenter.Models.Availability", b =>
-                {
-                    b.HasOne("BloodCenter.Models.BloodDonors", "BloodDonors")
-                        .WithMany()
-                        .HasForeignKey("BloodDonorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BloodDonors");
-                });
-
             modelBuilder.Entity("BloodCenter.Models.BloodDonors", b =>
                 {
-                    b.HasOne("BloodCenter.Data.ApplicationUser", null)
-                        .WithMany("BloodDonors")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroup")
                         .WithMany()
                         .HasForeignKey("BloodGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BloodCenter.Data.ApplicationUser", "User")
+                        .WithMany("BloodDonors")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("BloodGroup");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.DonationHistory", b =>
+                {
+                    b.HasOne("BloodCenter.Models.BloodDonors", "BloodDonor")
+                        .WithMany("DonationHistory")
+                        .HasForeignKey("BloodDonorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BloodDonor");
                 });
 
             modelBuilder.Entity("BloodCenter.Models.Requests", b =>
@@ -376,6 +409,17 @@ namespace BloodCenter.Migrations
                         .IsRequired();
 
                     b.Navigation("BloodGroups");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.Supply", b =>
+                {
+                    b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroup")
+                        .WithMany()
+                        .HasForeignKey("BloodGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BloodGroup");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -432,6 +476,11 @@ namespace BloodCenter.Migrations
             modelBuilder.Entity("BloodCenter.Data.ApplicationUser", b =>
                 {
                     b.Navigation("BloodDonors");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.BloodDonors", b =>
+                {
+                    b.Navigation("DonationHistory");
                 });
 #pragma warning restore 612, 618
         }

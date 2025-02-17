@@ -26,7 +26,7 @@ namespace BloodCenter.Models
         public string Contacts { get; set; }
         public ICollection<DonationHistory> DonationHistory { get; set; } = new List<DonationHistory>();
 
-        ICollection<Availability> Availabilities { get; set; }
+        ICollection<Supply> Supplies { get; set; }
         
     }
 }

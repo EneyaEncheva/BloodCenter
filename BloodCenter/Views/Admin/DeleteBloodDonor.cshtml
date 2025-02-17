@@ -7,17 +7,18 @@
 <h1>@ViewData["Title"]</h1>
 
 <h3>Сигурни ли сте, че искате да изтриете този кръводарител?</h3>
+<p></p>
 <div>
     <p><strong>Потребителско име:</strong> @Model.UserName</p>
     <p><strong>Електронна поща:</strong> @Model.Email</p>
     <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
     <p><strong>Възраст:</strong> @Model.Age</p>
-    <p><strong>Кръвна група:</strong> @Model.BloodGroupsId</p>@* //?? *@
+    <p><strong>Кръвна група:</strong> @Model.BloodGroupName</p>@* //?? *@
     <p><strong>Резус фактор:</strong> @(Model.RhesusFactor == '+' ? "Положителен (+)" : "Отрицателен (-)")</p>
     <p><strong>Контакти:</strong> @Model.Contacts</p>
 </div>
 
-<form asp-action="DeleteBloodDonor" method="post">
+<form asp-action="DeleteConfirmed" method="post">
     <input type="hidden" asp-for="Id" value="@Model.Id" />
     <input type="hidden" asp-for="Password" value="@Model.Password" />
     <button type="submit" class="btn btn-danger">Изтрий</button>

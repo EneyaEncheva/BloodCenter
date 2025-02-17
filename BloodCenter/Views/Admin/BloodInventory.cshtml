@@ -1,0 +1,25 @@
+﻿@if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
+{
+    <section class="section-container">
+        <div class="container-text text-title">
+            <h1>Наличности</h1>
+        </div>
+        <table class="table">
+            <tr>
+                <th>Кръвна група</th>
+                <th>Резус-фактор</th>
+                <th>Количество</th>
+                <th>Дата на актуализация</th>
+            </tr>
+            @foreach (var supply in Model)
+            {
+                <tr>
+                    <td>@supply.BloodGroup.Name</td>
+                    <td>@supply.RhesusFactor</td>
+                    <td>@supply.Quantity L</td>
+                    <td>@supply.LastUpdated.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+        </table>
+    </section>
+}

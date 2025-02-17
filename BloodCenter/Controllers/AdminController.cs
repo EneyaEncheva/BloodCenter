@@ -12,7 +12,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BloodCenter.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "MedicalSpecialist")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -184,6 +185,7 @@ namespace BloodCenter.Controllers
         {
             var bloodDonor = _context.BloodDonors
                 .Include(bd => bd.User)
+                .Include(bd => bd.BloodGroup)
                 .FirstOrDefault(bd => bd.Id == id);
 
             if (bloodDonor == null)
@@ -200,10 +202,10 @@ namespace BloodCenter.Controllers
                 LastName = bloodDonor.User.LastName,
                 Age = bloodDonor.Age,
                 BloodGroupsId = bloodDonor.BloodGroupId,
+                BloodGroupName = bloodDonor.BloodGroup.Name,
                 RhesusFactor = bloodDonor.RhesusFactor,
                 Contacts = bloodDonor.Contacts
             };
-
             return View(viewModel);
         }
 
@@ -229,12 +231,14 @@ namespace BloodCenter.Controllers
 
         //История на даренията
 
+        [HttpGet]
         public async Task<IActionResult> History()
         {
             var donations = await _context.DonationHistories
                 .Include(d => d.BloodDonor)
                 .ToListAsync();
 
+            ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");
             return View(donations);
         }
 
@@ -252,33 +256,127 @@ namespace BloodCenter.Controllers
             return View(donor);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddDonation(int bloodDonorId, double quantity)
+        //[HttpGet]
+        //public IActionResult AddDonation()
+        //{
+        //    ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");
+        //    return View();
+        //}
+
+        [HttpGet]
+        public IActionResult AddDonation()
         {
-            var bloodDonor = await _context.BloodDonors.FindAsync(bloodDonorId);
-            if (bloodDonor == null)
+            ViewData["BloodDonors"] = new SelectList(_context.BloodDonors.Include(d => d.User), "Id", "User.FirstName");
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddDonation(DonationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewData["Donors"] = new SelectList(_context.BloodDonors.Include(d => d.User), "Id", "User.FirstName");
+                return View(model);
+            }
+
+            var donor = await _context.BloodDonors.FindAsync(model.BloodDonorId);
+
+            if (donor == null)
             {
                 return NotFound("Кръводарителят не е намерен.");
             }
 
-            var donation = new DonationHistory
+            // Добавяне на дарение в историята
+            DonationHistory donation = new DonationHistory
             {
-                BloodDonorId = bloodDonorId,
-                DonationDate = DateTime.Now,
-                Quantity = quantity
+                BloodDonorId = donor.Id,
+                DonationDate = DateTime.Now, // Автоматично попълване на датата
+                Quantity = model.Quantity
             };
 
             _context.DonationHistories.Add(donation);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("History", new { id = bloodDonorId });
+            return RedirectToAction("History"); // Пренасочване към списъка с дарения
+        }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> AddDonation(DonationViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");
+        //        return View(model);
+        //    }
+        //    if (ModelState.IsValid)
+        //    {
+        //        var donor = await _context.BloodDonors.FindAsync(model.BloodDonorId);
+        //        if (donor == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        var donation = new DonationHistory
+        //        {
+        //            BloodDonorId = donor.Id,
+        //            Quantity = model.Quantity,
+        //            DonationDate = DateTime.Now
+        //        };
+
+        //        await _context.DonationHistories.AddAsync(donation);
+        //        await _context.SaveChangesAsync();
+
+        //        // Взимаме кръвната група и резус-фактора от дарителя
+        //        await UpdateBloodSupply(donor.BloodGroupId, donor.RhesusFactor, model.Quantity);
+
+        //        return RedirectToAction("History");
+        //    }
+        //    return View(model);
+        //}
+
+
+        public async Task<IActionResult> BloodInventory()
+        {
+            var supplies = await _context.Supplies.Include(s => s.BloodGroup).ToListAsync();
+            return View(supplies);
+        }
+
+        private async Task UpdateBloodSupply(int bloodGroupId, char rhesusFactor, double quantity)
+        {
+            var existingSupply = await _context.Supplies
+                .FirstOrDefaultAsync(s => s.BloodGroupId == bloodGroupId && s.RhesusFactor == rhesusFactor);
+
+            if (existingSupply != null)
+            {
+                existingSupply.Quantity += quantity;
+                existingSupply.LastUpdated = DateTime.Now;
+            }
+            else
+            {
+                var newSupply = new Supply
+                {
+                    BloodGroupId = bloodGroupId,
+                    RhesusFactor = rhesusFactor,
+                    Quantity = quantity,
+                    LastUpdated = DateTime.Now
+                };
+
+                await _context.Supplies.AddAsync(newSupply);
+            }
+
+            await _context.SaveChangesAsync();
         }
 
 
         //Медицински специалист
-        public IActionResult MedicalSpecialist()
+        public async Task<IActionResult> MedicalSpecialist()
         {
-            return View();
+            var model = await _context.Users
+                .Where(u => _context.UserRoles
+                .Any(ur => ur.UserId == u.Id && _context.Roles
+                .Any(r => r.Id == ur.RoleId && r.Name == "MedicalSpecialist")))
+                .ToListAsync();
+            return View(model);
         }
         public IActionResult AddMedicalSpecialist()
         {

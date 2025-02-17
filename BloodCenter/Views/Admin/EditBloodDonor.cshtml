@@ -48,12 +48,14 @@
                 <input asp-for="Age" type="number" class="form-control" required min="18" />
                 <span asp-validation-for="Age" class="text-danger"></span>
             </div>
-
-            <select asp-for="BloodGroupsId"
-                    asp-items="@ViewBag.BloodGroups"
-                    class="form-select border-0 bg-transparent">
-                <option selected class="fw-bold">Кръвна група</option>
-            </select>
+            <div class="form-group">
+                <label for="BloodGroupsId">Кръвна група</label>
+                <select asp-for="BloodGroupsId"
+                        asp-items="@ViewBag.BloodGroups"
+                        class="form-control">
+                    <option selected class="fw-bold">Кръвна група</option>
+                </select>
+            </div>
 
             <div class="form-group">
                 <label asp-for="RhesusFactor"></label>
@@ -65,14 +67,13 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Contacts"></label>
-                <input asp-for="Contacts" class="form-control" required />
                 <label asp-for="Contacts">Контакти</label>
+                <input asp-for="Contacts" class="form-control" required />
                 <span asp-validation-for="Contacts" class="text-danger"></span>
             </div>
             
             <input type="hidden" asp-for="Password" value="@Model.Password" />
-
+            <p></p>
             <button type="submit" class="btn btn-primary">Запази</button>
             <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
         </form>

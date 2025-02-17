@@ -18,7 +18,7 @@ namespace BloodCenter.Data
 
         public static async Task SeedAdminAsync(UserManager<ApplicationUser> userManager)
         {
-            ApplicationUser defaultUser = new()
+            ApplicationUser admin = new()
             {
                 UserName = "admin",
                 Email = "admin@gmail.com",
@@ -28,16 +28,16 @@ namespace BloodCenter.Data
                 PhoneNumberConfirmed = true
             };
 
-            ApplicationUser foundUser = await userManager.FindByEmailAsync(defaultUser.Email);
+            ApplicationUser foundUser = await userManager.FindByEmailAsync(admin.Email);
 
             if (foundUser == null)
             {
-                await userManager.CreateAsync(defaultUser, "abcdef");
+                await userManager.CreateAsync(admin, "abcdef");
 
-                await userManager.AddToRoleAsync(defaultUser, Role.Donor.ToString());
-                await userManager.AddToRoleAsync(defaultUser, Role.MedicalSpecialist.ToString());
-                await userManager.AddToRoleAsync(defaultUser, Role.Admin.ToString());
-                
+                //await userManager.AddToRoleAsync(defaultUser, Role.Donor.ToString());
+                //await userManager.AddToRoleAsync(defaultUser, Role.MedicalSpecialist.ToString());
+                await userManager.AddToRoleAsync(admin, Role.Admin.ToString());
+
             }
         }
     }

@@ -45,18 +45,21 @@
                         <label asp-for="Age">Възраст</label>
                         <span asp-validation-for="Age" class="text-danger"></span>
                     </div>
-                    <select asp-for="BloodGroupsId"
-                            asp-items="@ViewBag.BloodGroups"
-                            class="form-select border-0 bg-transparent">
-                        <option selected class="fw-bold">Изберете кръвна група</option>
-                    </select>
+                    <div class="form-group">
+                        <label for="BloodGroupsId">Кръвна група</label>
+                        <select asp-for="BloodGroupsId" asp-items="@ViewBag.BloodGroups" class="form-control">
+                            <option value="">-- Изберете кръвна група --</option>
+                        </select>
+                        <span asp-validation-for="BloodGroupsId" class="text-danger"></span>
+                    </div>
+                    <p></p>
                     <div class="form-floating mb-3">
-                        <input asp-for="RhesusFactor" class="form-control" autocomplete="rhesus-factor" aria-required="true" />
+                        <input asp-for="RhesusFactor" class="form-control" autocomplete="rhesus-factor" aria-required="true" placeholder="+/-" />
                         <label asp-for="RhesusFactor">Резус-фактор</label>
                         <span asp-validation-for="RhesusFactor" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3">
-                        <input asp-for="Contacts" class="form-control" autocomplete="contact" aria-required="true" />
+                        <input asp-for="Contacts" class="form-control" autocomplete="contact" aria-required="true" placeholder="contact" />
                         <label asp-for="Contacts">Контакти</label>
                         <span asp-validation-for="Contacts" class="text-danger"></span>
                     </div>

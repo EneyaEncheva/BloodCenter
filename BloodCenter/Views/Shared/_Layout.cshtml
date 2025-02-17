@@ -43,6 +43,12 @@
                                 <a class="nav-link text-dark" asp-controller="Admin" asp-action="History">История на даренията</a>
                             </li>
                         }
+                        @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="BloodInventory">Наличности</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

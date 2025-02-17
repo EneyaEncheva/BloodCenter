@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BloodCenter.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -177,20 +177,21 @@ namespace BloodCenter.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Age = table.Column<int>(type: "int", nullable: false),
                     BloodGroupId = table.Column<int>(type: "int", nullable: false),
                     RhesusFactor = table.Column<string>(type: "nvarchar(1)", nullable: false),
-                    Contacts = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Contacts = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BloodDonors", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BloodDonors_AspNetUsers_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_BloodDonors_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BloodDonors_BloodGroups_BloodGroupId",
                         column: x => x.BloodGroupId,
@@ -223,21 +224,43 @@ namespace BloodCenter.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Availability",
+                name: "Supplies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BloodDonorsId = table.Column<int>(type: "int", nullable: false),
+                    BloodGroupId = table.Column<int>(type: "int", nullable: false),
+                    RhesusFactor = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Availability", x => x.Id);
+                    table.PrimaryKey("PK_Supplies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Availability_BloodDonors_BloodDonorsId",
-                        column: x => x.BloodDonorsId,
+                        name: "FK_Supplies_BloodGroups_BloodGroupId",
+                        column: x => x.BloodGroupId,
+                        principalTable: "BloodGroups",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DonationHistories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BloodDonorId = table.Column<int>(type: "int", nullable: false),
+                    DonationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Quantity = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DonationHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DonationHistories_BloodDonors_BloodDonorId",
+                        column: x => x.BloodDonorId,
                         principalTable: "BloodDonors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -283,24 +306,29 @@ namespace BloodCenter.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Availability_BloodDonorsId",
-                table: "Availability",
-                column: "BloodDonorsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BloodDonors_ApplicationUserId",
-                table: "BloodDonors",
-                column: "ApplicationUserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BloodDonors_BloodGroupId",
                 table: "BloodDonors",
                 column: "BloodGroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BloodDonors_UserId",
+                table: "BloodDonors",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DonationHistories_BloodDonorId",
+                table: "DonationHistories",
+                column: "BloodDonorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Requests_BloodGroupsId",
                 table: "Requests",
                 column: "BloodGroupsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Supplies_BloodGroupId",
+                table: "Supplies",
+                column: "BloodGroupId");
         }
 
         /// <inheritdoc />
@@ -322,10 +350,13 @@ namespace BloodCenter.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Availability");
+                name: "DonationHistories");
 
             migrationBuilder.DropTable(
                 name: "Requests");
+
+            migrationBuilder.DropTable(
+                name: "Supplies");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -27,6 +27,8 @@ namespace BloodCenter.Models.ViewModels
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Кръвна група")]
         public int BloodGroupsId { get; set; }
 
+        public string? BloodGroupName { get; set; }
+
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Резус-фактор")]
         public char RhesusFactor { get; set; }
 
