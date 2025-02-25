@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        ICollection<BloodDonors> BloodDonors { get; set; }
-        ICollection<Requests> Requests { get; set; }
+        public ICollection<BloodDonors> BloodDonors { get; set; } = new List<BloodDonors>();
     }
 }

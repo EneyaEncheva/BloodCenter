@@ -179,6 +179,9 @@ namespace BloodCenter.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BloodGroupId")
+                        .HasColumnType("int");
+
                     b.Property<int>("BloodGroupsId")
                         .HasColumnType("int");
 
@@ -197,7 +200,7 @@ namespace BloodCenter.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BloodGroupsId");
+                    b.HasIndex("BloodGroupId");
 
                     b.ToTable("Requests");
                 });
@@ -370,7 +373,7 @@ namespace BloodCenter.Migrations
             modelBuilder.Entity("BloodCenter.Models.BloodDonors", b =>
                 {
                     b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroup")
-                        .WithMany()
+                        .WithMany("BloodDonors")
                         .HasForeignKey("BloodGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -401,9 +404,7 @@ namespace BloodCenter.Migrations
                 {
                     b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroups")
                         .WithMany()
-                        .HasForeignKey("BloodGroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BloodGroupId");
 
                     b.Navigation("BloodGroups");
                 });
@@ -478,6 +479,11 @@ namespace BloodCenter.Migrations
             modelBuilder.Entity("BloodCenter.Models.BloodDonors", b =>
                 {
                     b.Navigation("DonationHistory");
+                });
+
+            modelBuilder.Entity("BloodCenter.Models.BloodGroups", b =>
+                {
+                    b.Navigation("BloodDonors");
                 });
 #pragma warning restore 612, 618
         }

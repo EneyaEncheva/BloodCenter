@@ -1,0 +1,46 @@
+﻿@model IEnumerable<ApplicationUser>
+
+@if (User.IsInRole("Admin"))
+{
+    <section class="section-container">
+        <div class="container-text text-title">
+            <h1>Медицински специалисти</h1>
+        </div>
+
+        <a class="btn btn-success" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    @* <th>Id</th> *@
+                    <th>Потребителско име</th>
+                    <th>Електронна поща</th>
+                    <th>Име</th>
+                    <th>Фамилия</th>
+                    <th>Oпции</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null)
+                {
+                    <p class="text-danger">Няма налични медицински специалисти.</p>
+                    return;
+                }
+                @foreach (var medicalSpecialist in Model)
+                {
+                    <tr>
+                        @* <th>@medicalSpecialist.Id</th> *@
+                        <th>@medicalSpecialist.UserName</th>
+                        <th>@medicalSpecialist.Email</th>
+                        <th>@medicalSpecialist.FirstName</th>
+                        <th>@medicalSpecialist.LastName</th>
+                        <th>
+                            <a class="btn btn-warning" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Delete</a>
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}

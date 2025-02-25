@@ -41,7 +41,7 @@
                     </div>
                     @*BloodDonor Stuff*@
                     <div class="form-floating mb-3">
-                        <input asp-for="Age" class="form-control" autocomplete="age" aria-required="true" />
+                        <input asp-for="Age" min="18" class="form-control" autocomplete="age" aria-required="true"  />
                         <label asp-for="Age">Възраст</label>
                         <span asp-validation-for="Age" class="text-danger"></span>
                     </div>

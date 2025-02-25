@@ -6,7 +6,7 @@
         <div class="container-text text-title">
             <h1>История на даренията</h1>
         </div>
-        <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddDonation">Добави дарение</a>
+        <a class="btn btn-success" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
 
         <table class="table">
             <tr>
@@ -27,14 +27,11 @@
             {
                 <tr>
                     <th>@donationHistory.Id</th>
-                    <th>@donationHistory.BloodDonor.Id</th>@* ??? *@
+                    <th>@donationHistory.BloodDonor.User.FirstName @donationHistory.BloodDonor.User.LastName</th>@* ??? *@
                     <th>@donationHistory.DonationDate.ToShortDateString()</th>
                     <th>@donationHistory.Quantity ml</th>
                     <th>
-                        @* <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@donationHistory.Id">Edit</a>
-                        <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a> *@
-                        @* <a class="btn btn-success" asp-action="AddDonation" asp-route-bloodDonorId="@donationHistory.Id">Добави дарение</a> *@
-
+                        <a class="btn btn-danger" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">Изтриване</a>
                     </th>
                 </tr>
             }

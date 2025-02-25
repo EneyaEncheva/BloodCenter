@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Supply>
+
+<section class="section-container">
+    <div class="container-text text-title">
+        <h1>Наличности на кръв</h1>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Кръвна група</th>
+                <th>Резус-фактор</th>
+                <th>Количество (мл)</th>
+                <th>Дата на актуализация</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var supply in Model)
+            {
+                <tr>
+                    <td>@supply.BloodGroup.Name</td> <!-- Кръвната група -->
+                    <td>@supply.RhesusFactor</td> <!-- Резус-фактор -->
+                    <td>@supply.Quantity</td> <!-- Количество -->
+                    <td>@supply.LastUpdated.ToShortDateString()</td> <!-- Дата на актуализация -->
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

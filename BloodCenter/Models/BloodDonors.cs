@@ -25,8 +25,6 @@ namespace BloodCenter.Models
         [Display(Name = "Контактна информация")]
         public string Contacts { get; set; }
         public ICollection<DonationHistory> DonationHistory { get; set; } = new List<DonationHistory>();
-
-        ICollection<Supply> Supplies { get; set; }
         
     }
 }

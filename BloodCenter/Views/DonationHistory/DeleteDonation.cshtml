@@ -1,0 +1,20 @@
+﻿@model DonationViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на дарение";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Сигурни ли сте, че искате да изтриете дарението?</h3>
+<p></p>
+<div>
+    <p><strong>Количество:</strong> @Model.Quantity</p>
+    <p><strong>Дата на дарението:</strong> @Model.DonationDate</p>
+</div>
+
+<form method="post" asp-action="DeleteConfirmedDonation" asp-route-id="@Model.BloodDonorId">
+    <button type="submit" class="btn btn-danger">Да, изтрий</button>
+    <a href="@Url.Action("History")" class="btn btn-secondary">Отказ</a>
+</form>
+

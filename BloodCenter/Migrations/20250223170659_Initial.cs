@@ -208,6 +208,7 @@ namespace BloodCenter.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Hospital = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BloodGroupsId = table.Column<int>(type: "int", nullable: false),
+                    BloodGroupId = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<double>(type: "float", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false)
@@ -216,11 +217,10 @@ namespace BloodCenter.Migrations
                 {
                     table.PrimaryKey("PK_Requests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Requests_BloodGroups_BloodGroupsId",
-                        column: x => x.BloodGroupsId,
+                        name: "FK_Requests_BloodGroups_BloodGroupId",
+                        column: x => x.BloodGroupId,
                         principalTable: "BloodGroups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -321,9 +321,9 @@ namespace BloodCenter.Migrations
                 column: "BloodDonorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Requests_BloodGroupsId",
+                name: "IX_Requests_BloodGroupId",
                 table: "Requests",
-                column: "BloodGroupsId");
+                column: "BloodGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Supplies_BloodGroupId",
