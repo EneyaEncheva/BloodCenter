@@ -4,6 +4,7 @@ using BloodCenter.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250226063355_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,6 +185,9 @@ namespace BloodCenter.Migrations
                     b.Property<int>("BloodGroupId")
                         .HasColumnType("int");
 
+                    b.Property<int>("BloodGroupsId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -193,6 +199,7 @@ namespace BloodCenter.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("RequestedById")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RhesusFactor")
@@ -417,7 +424,9 @@ namespace BloodCenter.Migrations
 
                     b.HasOne("BloodCenter.Data.ApplicationUser", "RequestedBy")
                         .WithMany()
-                        .HasForeignKey("RequestedById");
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BloodGroup");
 

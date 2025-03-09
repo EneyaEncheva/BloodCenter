@@ -1,59 +1,138 @@
 ﻿@model IEnumerable<BloodCenter.Models.Requests>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Заявки";
 }
 
-<h1>Index</h1>
+<h1>Заявки</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-success" asp-area="" asp-controller="Requests" asp-action="Create">Прати заявка</a>
 </p>
 <table class="table">
-    <thead>
+    <tr>
+        <th>Лечебно заведение</th>
+        <th>Кръвна група</th>
+        <th>Резус-фактор</th>
+        <th>Количество</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th> </th>
+    </tr>
+
+    @foreach (var request in Model)
+    {
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Hospital)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BloodGroupsId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
+            <td>@request.Hospital</td>
+            <td>@(request.BloodGroup != null ? request.BloodGroup.Name : "Няма данни")</td>
+
+            <td>@request.RhesusFactor</td>
+            <td>@request.Quantity мл</td>
+            <td>@request.Date.ToShortDateString()</td>
+            <td>@request.Status</td>
             <td>
-                @Html.DisplayFor(modelItem => item.Hospital)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BloodGroupsId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAvailable)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (request.Status == "В процес на изпълнение")
+                {
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="id" value="@request.Id">
+                        <button type="submit" name="status" value="Одобрена" class="btn btn-success">Одобри</button>
+                        <button type="submit" name="status" value="Отхвърлена" class="btn btn-danger">Откажи</button>
+                    </form>
+                }
+                else
+                {
+                    <span> </span>
+                }
             </td>
         </tr>
-}
-    </tbody>
+    }
 </table>
+@* <table class="table">
+    <tr>
+        <th>Лечебно заведение</th>
+        <th>Кръвна група</th>
+        <th>Резус-фактор</th>
+        <th>Количество</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th>Действия</th>
+    </tr>
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-danger">Няма налични заявки.</p>
+    }
+    else
+    {
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Hospital</td>
+                    <td>
+                        @(item.BloodGroup != null ? item.BloodGroup.Name : "Няма данни")
+                    </td>
+                    <td>@item.RhesusFactor</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.Date</td>
+                    <td>@item.Status</td>
+                    <td>
+                        @* <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+                        @* <a class="btn btn-danger" asp-controller="Admin" asp-action="Delete">Изтриване</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    }
+</table> *@ 
+
+@* @model IEnumerable<BloodCenter.Models.Requests>
+
+@if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
+{
+    <section class="section-container">
+        <div class="container-text text-title">
+            <h1>Заявки</h1>
+        </div>
+        <a class="btn btn-success" asp-area="" asp-controller="Requests" asp-action="Create">Подай заявка</a>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Кръвна група</th>
+                    <th>Резус-фактор</th>
+                    <th>Количество</th>
+                    <th>Дата</th>
+                    <th>Статус</th>
+                    <th>Опции</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null)
+                {
+                    <p class="text-danger">Няма налични заявки.</p>
+                    return;
+                }
+                @foreach (var requests in Model)
+                {
+                    <tr>
+                        <th>@requests.Id</th>
+                        <th>@requests.BloodGroup.Name</th>
+                        <th>@requests.RhesusFactor</th>
+                        <th>@requests.Quantity</th>
+                        <th>@requests.Date</th>
+                        <th>@requests.Status</th>
+                        <th>
+                            <a class="btn btn-warning" asp-controller="Requests" asp-action="Edit" asp-route-id="@requests.Id">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Requests" asp-action="Delete" asp-route-id="@requests.Id">Delete</a>
+                            @* <a class="btn btn-success" asp-controller="Admin" asp-action="AddDonation" asp-route-bloodDonorId="@bloodDonor.Id">Добави дарение</a>
+
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}
+*@

@@ -7,7 +7,36 @@
             <h1>Кръводарители</h1>
         </div>
         <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
-
+        <p></p>
+        <form asp-controller="Admin" asp-action="AdminPanel" method="get">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>
+                            <input type="search" name="searched" placeholder="Име..." value="@ViewBag.Searched" />
+                            <button type="submit" class="btn btn-dark">
+                                Търси&nbsp;
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <select name="bloodGroupId" class="form-control">
+                                <option value="">-- Избери кръвна група --</option>
+                                @foreach (var group in ViewData["BloodGroups"] as SelectList)
+                                {
+                                    <option value="@group.Value" selected="@(group.Value == Context.Request.Query["bloodGroupId"] ? "selected" : null)">
+                                        @group.Text
+                                    </option>
+                                }
+                            </select>
+                            <p></p>
+                            <button type="submit" class="btn btn-primary">Филтрирай</button>
+                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+        </form>
         <table class="table">
             <thead>
                 <tr>
@@ -44,8 +73,6 @@
                         <th>
                             <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
                             <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>
-                            @* <a class="btn btn-success" asp-controller="Admin" asp-action="AddDonation" asp-route-bloodDonorId="@bloodDonor.Id">Добави дарение</a> *@
-
                         </th>
                     </tr>
                 }

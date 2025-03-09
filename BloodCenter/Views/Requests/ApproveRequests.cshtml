@@ -1,0 +1,42 @@
+﻿@model List<Requests>
+
+<h2>Заявки за кръв</h2>
+
+<table class="table">
+    <tr>
+        <th>Лечебно заведение</th>
+        <th>Кръвна група</th>
+        <th>Резус-фактор</th>
+        <th>Количество</th>
+        <th>Дата</th>
+        <th>Статус</th>
+        <th></th>
+    </tr>
+
+    @foreach (var request in Model)
+    {
+        <tr>
+            <td>@request.Hospital</td>
+            <td>@(request.BloodGroup != null ? request.BloodGroup.Name : "Няма данни")</td>
+
+            <td>@request.RhesusFactor</td>
+            <td>@request.Quantity мл</td>
+            <td>@request.Date.ToShortDateString()</td>
+            <td>@request.Status</td>
+            <td>
+                @if (request.Status == "В процес на изпълнение")
+                {
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="id" value="@request.Id">
+                        <button type="submit" name="status" value="Одобрена" class="btn btn-success">Одобри</button>
+                        <button type="submit" name="status" value="Отхвърлена" class="btn btn-danger">Откажи</button>
+                    </form>
+                }
+                else
+                {
+                    <span></span>
+                }
+            </td>
+        </tr>
+    }
+</table>

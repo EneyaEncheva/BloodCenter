@@ -208,19 +208,28 @@ namespace BloodCenter.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Hospital = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BloodGroupsId = table.Column<int>(type: "int", nullable: false),
-                    BloodGroupId = table.Column<int>(type: "int", nullable: true),
+                    BloodGroupId = table.Column<int>(type: "int", nullable: false),
+                    RhesusFactor = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RequestedById = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Requests", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Requests_AspNetUsers_RequestedById",
+                        column: x => x.RequestedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Requests_BloodGroups_BloodGroupId",
                         column: x => x.BloodGroupId,
                         principalTable: "BloodGroups",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -324,6 +333,11 @@ namespace BloodCenter.Migrations
                 name: "IX_Requests_BloodGroupId",
                 table: "Requests",
                 column: "BloodGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_RequestedById",
+                table: "Requests",
+                column: "RequestedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Supplies_BloodGroupId",

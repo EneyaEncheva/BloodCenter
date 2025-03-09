@@ -1,8 +1,60 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4">ДАРИ КРЪВ - СПАСИ ЖИВОТ!</h1>
+        <p class="lead">Всеки път, когато даряваш кръв, подаряваш живот.</p>
+        <a class="btn btn-primary btn-lg" asp-controller="DonationHistory" asp-action="AddDonation">Дарете кръв</a>
+    </div>
 </div>
+
+<div class="container mt-5">
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="info-box">
+                <h3>Заявки</h3>
+                <p>Прегледайте и подайте нови заявки за кръв.</p>
+                <a class="btn btn-outline-primary" asp-controller="Requests" asp-action="Index">Виж заявки</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <h3>Наличности</h3>
+                <p>Проверете наличните кръвни групи.</p>
+                <a class="btn btn-outline-primary" asp-controller="Supply" asp-action="BloodInventory">Преглед</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <h3>Кръводарители</h3>
+                <p>Разгледайте списъка с кръводарители.</p>
+                <a class="btn btn-outline-primary" asp-controller="Admin" asp-action="AdminPanel">Преглед</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <h3>Кампании</h3>
+                <p>Вижте предстоящите кръводарителски кампании.</p>
+                <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist">Виж медициснки специалист</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: url('C:\Users\User\Documents\Diplomna\darikruv.jpg') no-repeat center center;
+        background-size: cover;
+        color: white;
+        padding: 80px 0;
+    }
+    .info-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 10px 0;
+    }
+</style>

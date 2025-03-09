@@ -27,20 +27,42 @@ namespace BloodCenter.Controllers
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
-        public IActionResult AdminPanel()
+        [HttpGet]
+        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId)
         {
+            ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
+
             var bloodDonors = _context.BloodDonors
                 .Include(x => x.User)
                 .Include(x => x.BloodGroup)
-                .ToList();
+                .AsQueryable();
 
-            return View(bloodDonors);
+            if (!string.IsNullOrEmpty(searched))
+            {
+                bloodDonors = bloodDonors.Where(d => d.User.FirstName.Contains(searched));
+            };
+
+            if (bloodGroupId.HasValue && bloodGroupId > 0)
+            {
+                bloodDonors = bloodDonors.Where(d => d.BloodGroupId == bloodGroupId);
+            }
+
+
+            return View(await bloodDonors.ToListAsync());
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         public IActionResult AddBloodDonor()
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
+
+            var rhesusFactors = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "+", Text = "Положителен (+)" },
+                new SelectListItem { Value = "-", Text = "Отрицателен (-)" }
+            };
+
+            ViewBag.RhesusFactors = rhesusFactors;
 
             return View();
         }

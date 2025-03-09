@@ -1,51 +1,22 @@
 ﻿@model BloodCenter.Models.Requests
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Изтриване на заявка";
 }
 
-<h1>Delete</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Сигурни ли сте, че искате да изтриете заявката?</h3>
+<p></p>
 <div>
-    <h4>Requests</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Hospital)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Hospital)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BloodGroupsId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BloodGroupsId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsAvailable)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsAvailable)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <p><strong>Медицинско заведение:</strong> @Model.Hospital</p>
+    <p><strong>Кръвна група:</strong> @Model.BloodGroup.Name@Model.RhesusFactor</p>
+    <p><strong>Количество:</strong> @Model.Quantity</p>
+    <p><strong>Дата на заявката:</strong> @Model.Date</p>
+    <p><strong>Статус:</strong> @Model.Status</p>
 </div>
+
+<form method="post" asp-action="Delete">
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+    <a href="@Url.Action("Index")" class="btn btn-secondary">Отказ</a>
+</form>

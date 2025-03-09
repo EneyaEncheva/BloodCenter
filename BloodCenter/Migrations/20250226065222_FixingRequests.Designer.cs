@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BloodCenter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250223170659_Initial")]
-    partial class Initial
+    [Migration("20250226065222_FixingRequests")]
+    partial class FixingRequests
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -195,15 +195,25 @@ namespace BloodCenter.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
+
+                    b.Property<string>("RequestedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RhesusFactor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BloodGroupId");
+
+                    b.HasIndex("RequestedById");
 
                     b.ToTable("Requests");
                 });
@@ -405,11 +415,17 @@ namespace BloodCenter.Migrations
 
             modelBuilder.Entity("BloodCenter.Models.Requests", b =>
                 {
-                    b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroups")
+                    b.HasOne("BloodCenter.Models.BloodGroups", "BloodGroup")
                         .WithMany()
                         .HasForeignKey("BloodGroupId");
 
-                    b.Navigation("BloodGroups");
+                    b.HasOne("BloodCenter.Data.ApplicationUser", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById");
+
+                    b.Navigation("BloodGroup");
+
+                    b.Navigation("RequestedBy");
                 });
 
             modelBuilder.Entity("BloodCenter.Models.Supply", b =>
