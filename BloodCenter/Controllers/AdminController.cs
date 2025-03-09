@@ -28,7 +28,7 @@ namespace BloodCenter.Controllers
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
-        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId)
+        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId, char? rhesusFactor)
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
 
@@ -39,15 +39,22 @@ namespace BloodCenter.Controllers
 
             if (!string.IsNullOrEmpty(searched))
             {
-                bloodDonors = bloodDonors.Where(d => d.User.FirstName.Contains(searched));
-            };
+                bloodDonors = bloodDonors.Where(bd =>
+                    bd.User.FirstName.Contains(searched) ||
+                    bd.User.LastName.Contains(searched));
+            }
 
             if (bloodGroupId.HasValue && bloodGroupId > 0)
             {
                 bloodDonors = bloodDonors.Where(d => d.BloodGroupId == bloodGroupId);
             }
 
+            if (rhesusFactor.HasValue)
+            {
+                bloodDonors = bloodDonors.Where(bd => bd.RhesusFactor == rhesusFactor.Value);
+            }
 
+            ViewData["Searched"] = searched;
             return View(await bloodDonors.ToListAsync());
         }
 

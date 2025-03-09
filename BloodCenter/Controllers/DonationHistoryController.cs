@@ -23,17 +23,28 @@ namespace BloodCenter.Controllers
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
-        public async Task<IActionResult> History()
+        public async Task<IActionResult> History(DateTime? startDate, DateTime? endDate)
         {
-            var donations = await _context.DonationHistories
+            var donations = _context.DonationHistories
                 .Include(d => d.BloodDonor)
                 .ThenInclude(bd => bd.User)
-                .Include(d => d.BloodDonor)
-                .ThenInclude(bd => bd.BloodGroup)
-                .ToListAsync();
+                .Include(d => d.BloodDonor.BloodGroup)
+                .AsQueryable();
+
+            if (startDate.HasValue)
+            {
+                donations = donations.Where(d => d.DonationDate.Date >= startDate.Value.Date);
+            }
+            if (endDate.HasValue)
+            {
+                donations = donations.Where(d => d.DonationDate.Date <= endDate.Value.Date);
+            }
+
+            ViewData["StartDate"] = startDate?.ToString("yyyy-MM-dd"); 
+            ViewData["EndDate"] = endDate?.ToString("yyyy-MM-dd");
 
             ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");
-            return View(donations);
+            return View(await donations.ToListAsync());
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
@@ -43,6 +54,7 @@ namespace BloodCenter.Controllers
             var donor = await _context.BloodDonors
                 .Include(d => d.DonationHistory)
                 .FirstOrDefaultAsync(d => d.Id == id);
+
             if (donor == null)
             {
                 return NotFound();

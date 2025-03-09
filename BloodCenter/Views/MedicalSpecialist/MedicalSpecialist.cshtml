@@ -9,16 +9,20 @@
 
         <a class="btn btn-success" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
         <form asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist" method="get">
+            <p></p>
             <table class="table">
                 <thead>
                     <tr>
-                        <td>
-                            <input type="search" name="searched" placeholder="Име..." value="@ViewBag.Searched" />
+                        <div class="form-group col-md-3">
+                            <label>Търсене по име и фамилия</label>
+                            <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
+                            <p></p>
                             <button type="submit" class="btn btn-dark">
                                 Търси&nbsp;
                                 <i class="fas fa-search"></i>
                             </button>
-                        </td>
+                            <a asp-action="MedicalSpecialist" class="btn btn-secondary">Изчисти</a>
+                        </div>
                         @* <td>
                             <select name="bloodGroupId" class="form-control">
                                 <option value="">-- Избери кръвна група --</option>

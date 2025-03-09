@@ -1,5 +1,6 @@
 ﻿using BloodCenter.Data;
 using BloodCenter.Enums;
+using BloodCenter.Models;
 using BloodCenter.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -38,9 +39,12 @@ namespace BloodCenter.Controllers
 
             if (!string.IsNullOrEmpty(searched))
             {
-                model = model.Where(u => u.FirstName.Contains(searched)); 
+                model = model.Where(bd =>
+                    bd.FirstName.Contains(searched) ||
+                    bd.LastName.Contains(searched));
             }
 
+            ViewData["Searched"] = searched;
             return View(await model.ToListAsync());
         }
         public IActionResult AddMedicalSpecialist()

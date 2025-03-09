@@ -12,14 +12,26 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td>
+                        @* <div class="form-group col-md-4">
                             <input type="search" name="searched" placeholder="Име..." value="@ViewBag.Searched" />
                             <button type="submit" class="btn btn-dark">
                                 Търси&nbsp;
                                 <i class="fas fa-search"></i>
                             </button>
-                        </td>
-                        <td>
+                        </div> *@
+                        <div class="form-group col-md-3">
+                            <label>Търсене по име и фамилия</label>
+                            <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
+                            <p></p>
+                            <button type="submit" class="btn btn-dark">
+                                Търси&nbsp;
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                        </div>
+                        <p></p>
+                        <div class ="form-group col-md-4">
+                            <label>Кръвна група</label>
                             <select name="bloodGroupId" class="form-control">
                                 <option value="">-- Избери кръвна група --</option>
                                 @foreach (var group in ViewData["BloodGroups"] as SelectList)
@@ -32,7 +44,19 @@
                             <p></p>
                             <button type="submit" class="btn btn-primary">Филтрирай</button>
                             <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
-                        </td>
+                        </div>
+                        <p></p>
+                        <div class="form-group col-md-4">
+                            <label>Резус-фактор</label>
+                            <select name="rhesusFactor" class="form-control"> 
+                                <option value="">-- Изберете резус-фактор--</option>
+                                <option value="+">Положителен (+)</option>
+                                <option value="-">Отрицателен (-)</option>
+                            </select>
+                            <p></p>
+                            <button type="submit" class="btn btn-primary">Филтрирай</button>
+                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                        </div>
                     </tr>
                 </thead>
             </table>

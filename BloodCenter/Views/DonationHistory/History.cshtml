@@ -8,6 +8,26 @@
         </div>
         <a class="btn btn-success" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
         <p></p>
+        <form method="get" asp-controller="DonationHistory" asp-action="History">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <div class="form-group col-md-2">
+                            <label>Начална дата</label>
+                            <input type="date" name="startDate" class="form-control" value="@ViewData["StartDate"]">
+                        </div>
+
+                        <div class="form-group col-md-2">
+                            <label>Крайна дата</label>
+                            <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
+                        </div>
+                        <p></p>
+                        <button type="submit" class="btn btn-primary">Филтрирай</button>
+                        <a asp-action="History" class="btn btn-secondary">Изчисти</a>
+                    </tr>
+                </thead>
+            </table>
+        </form>
         <table class="table">
             <tr class="table-header">
                 <th>Id</th>
