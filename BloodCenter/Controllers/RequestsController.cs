@@ -219,11 +219,18 @@ namespace BloodCenter.Controllers
                 {
                     supply.Quantity -= request.Quantity;
                     request.Status = "Одобрена";
+                    request.ExecutionDate = DateTime.Now;
+                }
+                else
+                {
+                    request.Status = "Няма достатъчно кръв";
+                    request.ExecutionDate = DateTime.Now;
                 }
             }
             else
             {
                 request.Status = "Отхвърлена";
+                request.ExecutionDate = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();

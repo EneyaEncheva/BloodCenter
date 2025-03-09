@@ -28,6 +28,8 @@ namespace BloodCenter.Controllers
             var donations = await _context.DonationHistories
                 .Include(d => d.BloodDonor)
                 .ThenInclude(bd => bd.User)
+                .Include(d => d.BloodDonor)
+                .ThenInclude(bd => bd.BloodGroup)
                 .ToListAsync();
 
             ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");

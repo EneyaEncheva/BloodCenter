@@ -14,9 +14,10 @@ namespace BloodCenter.Models
         public char RhesusFactor { get; set; }
         public double Quantity { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
-        public string Status { get; set; } = "Изчаква одобрение";
+        public string Status { get; set; } = "В процес на изпълнение";
         public string? RequestedById { get; set; } // ID на потребителя (медицинското лице)
         public ApplicationUser? RequestedBy { get; set; } // Навигационно свойство
+        public DateTime? ExecutionDate { get; set; }
 
     }
 }

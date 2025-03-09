@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BloodCenter.Controllers
 {
@@ -22,14 +23,25 @@ namespace BloodCenter.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> MedicalSpecialist()
+        public async Task<IActionResult> MedicalSpecialist(string searched)
         {
-            var model = await _context.Users
+            //var model = await _context.Users
+            //    .Where(u => _context.UserRoles
+            //    .Any(ur => ur.UserId == u.Id && _context.Roles
+            //    .Any(r => r.Id == ur.RoleId && r.Name == "MedicalSpecialist")))
+            //    .ToListAsync();
+
+            var model = _context.Users
                 .Where(u => _context.UserRoles
                 .Any(ur => ur.UserId == u.Id && _context.Roles
-                .Any(r => r.Id == ur.RoleId && r.Name == "MedicalSpecialist")))
-                .ToListAsync();
-            return View(model);
+                .Any(r => r.Id == ur.RoleId && r.Name == "MedicalSpecialist")));
+
+            if (!string.IsNullOrEmpty(searched))
+            {
+                model = model.Where(u => u.FirstName.Contains(searched)); 
+            }
+
+            return View(await model.ToListAsync());
         }
         public IActionResult AddMedicalSpecialist()
         {

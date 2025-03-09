@@ -15,8 +15,9 @@
         <th>Кръвна група</th>
         <th>Резус-фактор</th>
         <th>Количество</th>
-        <th>Дата</th>
+        <th>Дата на заявката </th>
         <th>Статус</th>
+        <th>Дата на изпълнение</th>
         <th> </th>
     </tr>
 
@@ -30,6 +31,7 @@
             <td>@request.Quantity мл</td>
             <td>@request.Date.ToShortDateString()</td>
             <td>@request.Status</td>
+            <td>@(request.ExecutionDate?.ToShortDateString() ?? "-")</td>
             <td>
                 @if (request.Status == "В процес на изпълнение")
                 {

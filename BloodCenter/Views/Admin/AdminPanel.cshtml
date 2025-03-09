@@ -40,7 +40,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Id</th>
+                    @* <th>Id</th> *@
                     <th>Потребителско име</th>
                     <th>Електронна поща</th>
                     <th>Име</th>
@@ -61,15 +61,15 @@
                 @foreach (var bloodDonor in Model)
                 {
                     <tr>
-                        <th>@bloodDonor.Id</th>
-                        <th>@bloodDonor.User.UserName</th>
-                        <th>@bloodDonor.User.Email</th>
-                        <th>@bloodDonor.User.FirstName</th>
-                        <th>@bloodDonor.User.LastName</th>
-                        <th>@bloodDonor.Age</th>
-                        <th>@bloodDonor.BloodGroup.Name</th>
-                        <th>@bloodDonor.RhesusFactor</th>
-                        <th>@bloodDonor.Contacts</th>
+                        @* <th>@bloodDonor.Id</th> *@
+                        <td>@bloodDonor.User.UserName</td>
+                        <td>@bloodDonor.User.Email</td>
+                        <td>@bloodDonor.User.FirstName</td>
+                        <td>@bloodDonor.User.LastName</td>
+                        <td>@bloodDonor.Age</td>
+                        <td>@bloodDonor.BloodGroup.Name</td>
+                        <td>@bloodDonor.RhesusFactor</td>
+                        <td>@bloodDonor.Contacts</td>
                         <th>
                             <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
                             <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>

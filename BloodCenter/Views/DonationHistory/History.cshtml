@@ -7,11 +7,13 @@
             <h1>История на даренията</h1>
         </div>
         <a class="btn btn-success" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
-
+        <p></p>
         <table class="table">
-            <tr>
+            <tr class="table-header">
                 <th>Id</th>
                 <th>Кръводарител</th>
+                <th>Кръвна група</th>
+                <th>Резус-фактор</th>
                 <th>Дата на дарение</th>
                 <th>Количество</th>
                 <th>Опции</th>
@@ -27,12 +29,14 @@
             {
                 <tr>
                     <th>@donationHistory.Id</th>
-                    <th>@donationHistory.BloodDonor.User.FirstName @donationHistory.BloodDonor.User.LastName</th>@* ??? *@
-                    <th>@donationHistory.DonationDate.ToShortDateString()</th>
-                    <th>@donationHistory.Quantity ml</th>
-                    <th>
+                    <td>@donationHistory.BloodDonor.User.FirstName @donationHistory.BloodDonor.User.LastName</td>@* ??? *@
+                    <td>@donationHistory.BloodDonor.BloodGroup.Name</td>
+                    <td>@donationHistory.BloodDonor.RhesusFactor</td>
+                    <td>@donationHistory.DonationDate.ToShortDateString()</td>
+                    <td>@donationHistory.Quantity ml</td>
+                    <td>
                         <a class="btn btn-danger" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">Изтриване</a>
-                    </th>
+                    </td>
                 </tr>
             }
         </table>
