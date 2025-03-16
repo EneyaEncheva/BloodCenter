@@ -12,8 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BloodCenter.Controllers
 {
-    //[Authorize(Roles = "Admin")]
-    //[Authorize(Roles = "MedicalSpecialist")]
     public class AdminController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -28,7 +26,7 @@ namespace BloodCenter.Controllers
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
-        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId, char? rhesusFactor)
+        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId, char? rhesusFactor, int pageIndex = 1)
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
 
@@ -37,25 +35,36 @@ namespace BloodCenter.Controllers
                 .Include(x => x.BloodGroup)
                 .AsQueryable();
 
+            //Търсене
             if (!string.IsNullOrEmpty(searched))
             {
                 bloodDonors = bloodDonors.Where(bd =>
-                    bd.User.FirstName.Contains(searched) ||
+                    bd.User.FirstName.Contains(searched) &&
                     bd.User.LastName.Contains(searched));
             }
 
+            //Филтриране
             if (bloodGroupId.HasValue && bloodGroupId > 0)
             {
-                bloodDonors = bloodDonors.Where(d => d.BloodGroupId == bloodGroupId);
+                bloodDonors = bloodDonors.Where(x => x.BloodGroupId == bloodGroupId);
             }
 
             if (rhesusFactor.HasValue)
             {
-                bloodDonors = bloodDonors.Where(bd => bd.RhesusFactor == rhesusFactor.Value);
+                bloodDonors = bloodDonors.Where(x => x.RhesusFactor == rhesusFactor.Value);
             }
 
+            //Странициране
+            const int pageSize = 7;
+
+            var donorsList = await bloodDonors.ToListAsync();
+            var paginatedDonors = PaginatedList<BloodDonors>.Create(donorsList, pageIndex, pageSize);
+
             ViewData["Searched"] = searched;
-            return View(await bloodDonors.ToListAsync());
+            ViewData["BloodGroupId"] = bloodGroupId;
+            ViewData["RhesusFactor"] = rhesusFactor;
+
+            return View(paginatedDonors);
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]

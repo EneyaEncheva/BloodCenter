@@ -10,6 +10,7 @@ namespace BloodCenter.Models.ViewModels
         public string UserName { get; set; }
 
         //[Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Парола")]
+        [Required(ErrorMessage = "Това поле е задължително.")]
         [MinLength(6, ErrorMessage = "Паролата трябва да е поне 6 символа!")]
         public string? Password { get; set; }
         

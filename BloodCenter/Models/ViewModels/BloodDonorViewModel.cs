@@ -34,5 +34,8 @@ namespace BloodCenter.Models.ViewModels
 
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Контакти")]
         public string Contacts { get; set; }
+
+        public int CurrentPage {  get; set; }
+        public int TotalPages { get; set; }
     }
 }

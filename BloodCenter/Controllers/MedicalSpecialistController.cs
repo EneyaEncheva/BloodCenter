@@ -26,12 +26,6 @@ namespace BloodCenter.Controllers
 
         public async Task<IActionResult> MedicalSpecialist(string searched)
         {
-            //var model = await _context.Users
-            //    .Where(u => _context.UserRoles
-            //    .Any(ur => ur.UserId == u.Id && _context.Roles
-            //    .Any(r => r.Id == ur.RoleId && r.Name == "MedicalSpecialist")))
-            //    .ToListAsync();
-
             var model = _context.Users
                 .Where(u => _context.UserRoles
                 .Any(ur => ur.UserId == u.Id && _context.Roles

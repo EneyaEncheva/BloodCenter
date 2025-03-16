@@ -7,14 +7,14 @@
             <h1>Медицински специалисти</h1>
         </div>
 
-        <a class="btn btn-success" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
+        <a class="text-white btn btn-info" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
         <form asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist" method="get">
             <p></p>
             <table class="table">
                 <thead>
                     <tr>
                         <div class="form-group col-md-3">
-                            <label>Търсене по име и фамилия</label>
+                            <label>Търсене по име или фамилия</label>
                             <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
                             <p></p>
                             <button type="submit" class="btn btn-dark">
@@ -23,20 +23,6 @@
                             </button>
                             <a asp-action="MedicalSpecialist" class="btn btn-secondary">Изчисти</a>
                         </div>
-                        @* <td>
-                            <select name="bloodGroupId" class="form-control">
-                                <option value="">-- Избери кръвна група --</option>
-                                @foreach (var group in ViewData["BloodGroups"] as SelectList)
-                                {
-                                    <option value="@group.Value" selected="@(group.Value == Context.Request.Query["bloodGroupId"] ? "selected" : null)">
-                                        @group.Text
-                                    </option>
-                                }
-                            </select>
-                            <p></p>
-                            <button type="submit" class="btn btn-primary">Филтрирай</button>
-                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
-                        </td> *@
                     </tr>
                 </thead>
             </table>
@@ -65,8 +51,8 @@
                         <td>@medicalSpecialist.FirstName</td>
                         <td>@medicalSpecialist.LastName</td>
                         <th>
-                            <a class="btn btn-warning" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Edit</a>
-                            <a class="btn btn-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Delete</a>
+                            <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Редактиране</a>
+                            <a class="btn btn-outline-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Изтриване</a>
                         </th>
                     </tr>
                 }
@@ -74,3 +60,26 @@
         </table>
     </section>
 }
+
+<style>
+    .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .container-text {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .container-text h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+</style>

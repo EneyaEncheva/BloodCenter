@@ -19,7 +19,7 @@ namespace BloodCenter.Controllers
         public async Task<IActionResult> BloodInventory()
         {
             var supplies = await _context.Supplies
-                .Include(s => s.BloodGroup) // Включваме информация за кръвната група
+                .Include(s => s.BloodGroup)
                 .ToListAsync();
 
             return View(supplies);

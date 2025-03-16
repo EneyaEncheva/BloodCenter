@@ -1,60 +1,147 @@
-﻿@{
-    ViewData["Title"] = "Начало";
+﻿@* <!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кръводарителски Център</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: beige;
+        }
+
+        .hero {
+            background: url('C:\Users\User\Documents\Diplomna\darikruv.jpg') center/cover;
+            color: black;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .btn-donate {
+            background-color: #dc3545;
+            color: white;
+            font-size: 20px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-dark:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <h1>Дарете кръв, спасете живот!</h1>
+        <p>Вашата кръв може да спаси нечий живот. Направете разликата още днес.</p>
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-donate">Стани дарител</a>
+    </header>
+
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <h3>Защо да дарите кръв?</h3>
+                <p>Една кръвна дарителска сесия може да спаси до три живота. Даряването на кръв е безопасно и отнема само 15 минути.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <h3>Кой може да дарява?</h3>
+                <p>Всеки здрав човек между 18 и 65 години, с тегло над 50 кг, може да стане кръводарител.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <h3>Как да даря?</h3>
+                <p>Посетете най-близкия кръводарителен център или организирана кръводарителска акция във вашия град.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="container text-center my-5">
+        <h2>Най-търсени кръвни групи</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Кръвна група</th>
+                    <th>Брой заявки</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (ViewData["MostRequestedBloodGroups"] != null)
+                {
+                    @foreach (var item in (IEnumerable<dynamic>)ViewData["MostRequestedBloodGroups"])
+                    {
+                        <tr>
+                            <td>@item.BloodGroupName @(item.RhesusFactor == '+' ? "+" : "-")</td>
+                            <td>@item.Count</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="3" class="text-center">Няма налични данни</td></tr>
+                }
+            </tbody>
+        </table>
+    </section>
+</body>
+</html>
+ *@
+
+
+@{
+    ViewData["Title"] = "Кръводарителски център";
 }
 
-<div class="hero-section">
-    <div class="container text-center">
-        <h1 class="display-4">ДАРИ КРЪВ - СПАСИ ЖИВОТ!</h1>
-        <p class="lead">Всеки път, когато даряваш кръв, подаряваш живот.</p>
-        <a class="btn btn-primary btn-lg" asp-controller="DonationHistory" asp-action="AddDonation">Дарете кръв</a>
+<div class="container text-center mt-5">
+    <h1 class="display-4 text-danger">Дари кръв, спаси живот!</h1>
+    <p class="lead">Вашата кръв може да спаси нечий живот. Направете разликата още днес.</p>
+    <a class="btn btn-danger btn-lg mt-3" asp-controller="Donate" asp-action="Index">Donate Now</a>
+</div>
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary">Кой може да дарява?</h2>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <h3>Години</h3>
+                <p>Кръводарителят трябва да бъде между 18 и 65 години.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <h3>Тегло</h3>
+                <p>Теглото на кръводарителя не трябва да бъде под 50 кг.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 shadow">
+                <h3>Здраве</h3>
+                <p>Кръводарителят трябва да бъде напълно здрав.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="container mt-5">
-    <div class="row text-center">
-        <div class="col-md-3">
-            <div class="info-box">
-                <h3>Заявки</h3>
-                <p>Прегледайте и подайте нови заявки за кръв.</p>
-                <a class="btn btn-outline-primary" asp-controller="Requests" asp-action="Index">Виж заявки</a>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="info-box">
-                <h3>Наличности</h3>
-                <p>Проверете наличните кръвни групи.</p>
-                <a class="btn btn-outline-primary" asp-controller="Supply" asp-action="BloodInventory">Преглед</a>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="info-box">
-                <h3>Кръводарители</h3>
-                <p>Разгледайте списъка с кръводарители.</p>
-                <a class="btn btn-outline-primary" asp-controller="Admin" asp-action="AdminPanel">Преглед</a>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="info-box">
-                <h3>Кампании</h3>
-                <p>Вижте предстоящите кръводарителски кампании.</p>
-                <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist">Виж медициснки специалист</a>
-            </div>
-        </div>
-    </div>
+    <h2 class="text-center text-primary">Таблица за съвместимост на кръвта</h2>
+    <table class="table table-bordered table-striped text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>Кръвна група</th>
+                <th>Може да дарява на</th>
+                <th>Може да получава от</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>O-</td><td>Всички кръвни групи</td><td>O-</td></tr>
+            <tr><td>O+</td><td>O+, A+, B+, AB+</td><td>O-, O+</td></tr>
+            <tr><td>A-</td><td>A+, A-, AB+, AB-</td><td>O-, A-</td></tr>
+            <tr><td>A+</td><td>A+, AB+</td><td>O-, O+, A-, A+</td></tr>
+            <tr><td>B-</td><td>B+, B-, AB+, AB-</td><td>O-, B-</td></tr>
+            <tr><td>B+</td><td>B+, AB+</td><td>O-, O+, B-, B+</td></tr>
+            <tr><td>AB-</td><td>AB+, AB-</td><td>O-, A-, B-, AB-</td></tr>
+            <tr><td>AB+</td><td>AB+</td><td>Всички кръвни групи</td></tr>
+        </tbody>
+    </table>
 </div>
-
-<style>
-    .hero-section {
-        background: url('C:\Users\User\Documents\Diplomna\darikruv.jpg') no-repeat center center;
-        background-size: cover;
-        color: white;
-        padding: 80px 0;
-    }
-    .info-box {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        margin: 10px 0;
-    }
-</style>

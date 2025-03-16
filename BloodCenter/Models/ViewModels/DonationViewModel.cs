@@ -4,10 +4,10 @@ namespace BloodCenter.Models.ViewModels
 {
     public class DonationViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Това поле е задължително.")]
         public int BloodDonorId { get; set; }  // ID на кръводарителя
 
-        [Required]
+        [Required(ErrorMessage = "Това поле е задължително.")]
         public double Quantity { get; set; } 
 
         public DateTime DonationDate { get; set; } = DateTime.Now; 

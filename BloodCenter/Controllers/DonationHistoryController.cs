@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace BloodCenter.Controllers
 {
@@ -23,7 +24,7 @@ namespace BloodCenter.Controllers
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
-        public async Task<IActionResult> History(DateTime? startDate, DateTime? endDate)
+        public async Task<IActionResult> History(string searched, DateTime? startDate, DateTime? endDate, int? bloodGroupId, char? rhesusFactor, int pageIndex = 1)
         {
             var donations = _context.DonationHistories
                 .Include(d => d.BloodDonor)
@@ -31,6 +32,16 @@ namespace BloodCenter.Controllers
                 .Include(d => d.BloodDonor.BloodGroup)
                 .AsQueryable();
 
+            //Търсене
+            if (!string.IsNullOrWhiteSpace(searched))
+            {
+                string lowerSearched = searched.ToLower();
+                donations = donations.Where(d =>
+                    d.BloodDonor.User.FirstName.ToLower().Contains(lowerSearched) ||
+                    d.BloodDonor.User.LastName.ToLower().Contains(lowerSearched));
+            }
+
+            //Филтриране
             if (startDate.HasValue)
             {
                 donations = donations.Where(d => d.DonationDate.Date >= startDate.Value.Date);
@@ -40,11 +51,30 @@ namespace BloodCenter.Controllers
                 donations = donations.Where(d => d.DonationDate.Date <= endDate.Value.Date);
             }
 
+            if (bloodGroupId.HasValue && bloodGroupId > 0)
+            {
+                donations = donations.Where(d => d.BloodDonor.BloodGroupId == bloodGroupId);
+            }
+
+            if (rhesusFactor.HasValue)
+            {
+                donations = donations.Where(d => d.BloodDonor.RhesusFactor == rhesusFactor.Value);
+            }
+
+            const int pageSize = 5;
+
+            var donationList = await donations.ToListAsync();
+            var paginatedDonations = PaginatedList<DonationHistory>.Create(donationList, pageIndex, pageSize);
+
+            ViewData["Searched"] = searched;
             ViewData["StartDate"] = startDate?.ToString("yyyy-MM-dd"); 
             ViewData["EndDate"] = endDate?.ToString("yyyy-MM-dd");
+            
 
             ViewData["BloodDonors"] = new SelectList(_context.BloodDonors, "Id", "User.FirstName");
-            return View(await donations.ToListAsync());
+            ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
+            ViewData["RhesusFactor"] = rhesusFactor;
+            return View(donationList);
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
@@ -67,10 +97,20 @@ namespace BloodCenter.Controllers
         [HttpGet]
         public IActionResult AddDonation()
         {
-            ViewData["BloodDonors"] = new SelectList(_context.BloodDonors.Include(d => d.User), "Id", "User.FirstName");
+            ViewBag.BloodDonors = _context.BloodDonors
+                .Include(d => d.User)
+                .Include(d => d.BloodGroup)
+                .Select(d => new SelectListItem
+                {
+                    Value = d.Id.ToString(),
+                    Text = $"{d.User.FirstName} {d.User.LastName} ({d.BloodGroup.Name}{d.RhesusFactor})"
+                })
+                .ToList();
 
             return View();
         }
+
+
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpPost]
@@ -107,7 +147,7 @@ namespace BloodCenter.Controllers
         private async Task UpdateBloodSupply(int donorId, double quantity)
         {
             var donor = await _context.BloodDonors
-                .Include(d => d.BloodGroup) // Включваме връзката към кръвната група
+                .Include(d => d.BloodGroup) 
                 .FirstOrDefaultAsync(d => d.Id == donorId);
 
             if (donor == null)
@@ -146,7 +186,7 @@ namespace BloodCenter.Controllers
         {
             var donation = _context.DonationHistories
                 .Include(d => d.BloodDonor)
-                .ThenInclude(bd => bd.User) // Включваме потребителя на кръводарителя
+                .ThenInclude(bd => bd.User) 
                 .FirstOrDefault(d => d.Id == id);
 
             if (donation == null)
@@ -186,41 +226,14 @@ namespace BloodCenter.Controllers
             return RedirectToAction("History");
         }
 
-
-
-        //private async Task RemoveFromBloodSupply(int donorId, double quantity)
-        //{
-        //    var donor = await _context.BloodDonors
-        //        .Include(d => d.BloodGroup)
-        //        .FirstOrDefaultAsync(d => d.Id == donorId);
-
-        //    if (donor == null)
-        //    {
-        //        throw new Exception("Кръводарителят не съществува.");
-        //    }
-
-        //    var supply = await _context.Supplies
-        //        .FirstOrDefaultAsync(s => s.BloodGroupId == donor.BloodGroupId && s.RhesusFactor == donor.RhesusFactor);
-
-        //    if (supply != null)
-        //    {
-        //        // Намаляване на количеството, но да не става отрицателно
-        //        supply.Quantity = Math.Max(0, supply.Quantity - quantity);
-        //        supply.LastUpdated = DateTime.Now;
-
-        //        await _context.SaveChangesAsync();
-        //    }
-        //}
-
-
         [Authorize(Roles = "Donor")]
         public async Task<IActionResult> MyDonations()
         {
-            // Взима логнатия потребител
+            // Взема логнатия потребител
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Login", "Account"); // Ако не е логнат, пренасочи към логин
+                return RedirectToAction("Login", "Account");
             }
 
             var userId = user.Id;

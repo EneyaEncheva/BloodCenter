@@ -1,4 +1,4 @@
-﻿@model List<BloodDonors>
+﻿@model PaginatedList<BloodCenter.Models.BloodDonors>
 
 @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
 {
@@ -6,60 +6,48 @@
         <div class="container-text text-title">
             <h1>Кръводарители</h1>
         </div>
-        <a class="btn btn-success" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
+        <a class="text-white btn btn-info" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
         <p></p>
         <form asp-controller="Admin" asp-action="AdminPanel" method="get">
-            <table class="table">
-                <thead>
-                    <tr>
-                        @* <div class="form-group col-md-4">
-                            <input type="search" name="searched" placeholder="Име..." value="@ViewBag.Searched" />
-                            <button type="submit" class="btn btn-dark">
-                                Търси&nbsp;
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div> *@
-                        <div class="form-group col-md-3">
-                            <label>Търсене по име и фамилия</label>
-                            <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
-                            <p></p>
-                            <button type="submit" class="btn btn-dark">
-                                Търси&nbsp;
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
-                        </div>
-                        <p></p>
-                        <div class ="form-group col-md-4">
-                            <label>Кръвна група</label>
-                            <select name="bloodGroupId" class="form-control">
-                                <option value="">-- Избери кръвна група --</option>
-                                @foreach (var group in ViewData["BloodGroups"] as SelectList)
-                                {
-                                    <option value="@group.Value" selected="@(group.Value == Context.Request.Query["bloodGroupId"] ? "selected" : null)">
-                                        @group.Text
-                                    </option>
-                                }
-                            </select>
-                            <p></p>
-                            <button type="submit" class="btn btn-primary">Филтрирай</button>
-                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
-                        </div>
-                        <p></p>
-                        <div class="form-group col-md-4">
-                            <label>Резус-фактор</label>
-                            <select name="rhesusFactor" class="form-control"> 
-                                <option value="">-- Изберете резус-фактор--</option>
-                                <option value="+">Положителен (+)</option>
-                                <option value="-">Отрицателен (-)</option>
-                            </select>
-                            <p></p>
-                            <button type="submit" class="btn btn-primary">Филтрирай</button>
-                            <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
-                        </div>
-                    </tr>
-                </thead>
-            </table>
+            <div class="row">
+                <div class="form-group col-md-3">
+                    <label>Търсене по име или фамилия</label>
+                    <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
+                    <p></p>
+                    <button type="submit" class="btn btn-dark">
+                        Търси&nbsp;
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                </div>
+
+                <div class="form-group col-md-3">
+                    <label>Кръвна група</label>
+                    <select name="bloodGroupId" class="form-control">
+                        <option value="">-- Всички кръвни групи --</option>
+                        @foreach (var group in ViewData["BloodGroups"] as SelectList)
+                        {
+                            <option value="@group.Value" selected="@(group.Value == Context.Request.Query["bloodGroupId"] ? "selected" : null)">
+                                @group.Text
+                            </option>
+                        }
+                    </select>
+                    <p></p>
+                    <button type="submit" class="btn btn-dark">Филтрирай</button>
+                    <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Резус-фактор</label>
+                    <select name="rhesusFactor" class="form-control">
+                        <option value="">-- Всички резус-фактори --</option>
+                        <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
+                        <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
+                    </select>
+                    <p></p>
+                    <button type="submit" class="btn btn-dark">Филтрирай</button>
+                    <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                </div>
+            </div>
         </form>
         <table class="table">
             <thead>
@@ -95,12 +83,103 @@
                         <td>@bloodDonor.RhesusFactor</td>
                         <td>@bloodDonor.Contacts</td>
                         <th>
-                            <a class="btn btn-warning" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Edit</a>
-                            <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Delete</a>
+                            <a class="btn btn-primary" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Редактиране</a>
+                            <a class="btn btn-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Изтриване</a>
                         </th>
                     </tr>
                 }
             </tbody>
         </table>
     </section>
+
+    @if (Model.TotalPages > 1)
+    {
+        <ul class="pagination pagination-custom">
+            @if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@(Model.PageIndex - 1)">Предишна</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@i">@i</a>
+                </li>
+            }
+
+            @if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@(Model.PageIndex + 1)">Следваща</a>
+                </li>
+            }
+        </ul>
+    }
 }
+<style>
+    .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .container-text {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .container-text h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+    .pagination-custom {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+        .pagination-custom .page-link {
+            margin: 0 5px;
+            border-radius: 5px;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            color: #007bff;
+            border: 1px solid #ddd;
+        }
+
+        .pagination-custom .page-item.active .page-link {
+            background-color: #dc3545; /* Червен фон за активната страница */
+            color: white;
+        }
+
+        .pagination-custom .page-item .page-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Стилове за бутоните "Предишна" и "Следваща" */
+        .pagination-custom .page-item .page-link {
+            background-color: #343a40; /* Черен фон за бутоните */
+            color: white;
+            border: 1px solid #343a40;
+        }
+
+            .pagination-custom .page-item .page-link:hover {
+                background-color: #dc3545; /* Червен при hover */
+                color: white;
+            }
+
+        .pagination-custom .page-item.disabled .page-link {
+            background-color: #6c757d; /* Сив за неактивните бутоните */
+            color: white;
+            pointer-events: none;
+        }
+</style>

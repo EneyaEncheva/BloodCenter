@@ -6,28 +6,73 @@
         <div class="container-text text-title">
             <h1>История на даренията</h1>
         </div>
-        <a class="btn btn-success" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
+        <a class="text-white btn btn-info" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
         <p></p>
-        <form method="get" asp-controller="DonationHistory" asp-action="History">
+
+        <form method="get">
             <table class="table">
                 <thead>
                     <tr>
-                        <div class="form-group col-md-2">
-                            <label>Начална дата</label>
-                            <input type="date" name="startDate" class="form-control" value="@ViewData["StartDate"]">
-                        </div>
+                        <div class="row flex-nowrap">
+                            <!-- Филтриране по търсене по име и фамилия -->
+                            <div class="form-group col-md-4">
+                                <label>Търсене по име или фамилия</label>
+                                <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
+                            </div>
 
-                        <div class="form-group col-md-2">
-                            <label>Крайна дата</label>
-                            <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
+                            <!-- Филтриране по кръвна група -->
+                            <div class="form-group col-md-4">
+                                <label>Кръвна група</label>
+                                <select name="bloodGroupId" class="form-control">
+                                    <option value="">-- Всички кръвни групи --</option>
+                                    @if (ViewData["BloodGroups"] != null)
+                                    {
+                                        foreach (var group in (SelectList)ViewData["BloodGroups"])
+                                        {
+                                            <option value="@group.Value" selected="@(group.Value == ViewData["BloodGroupId"]?.ToString() ? "selected" : null)">
+                                                @group.Text
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Филтриране по резус-фактор -->
+                            <div class="form-group col-md-4">
+                                <label>Резус-фактор</label>
+                                <select name="rhesusFactor" class="form-control">
+                                    <option value="">-- Всички резус-фактори --</option>
+                                    <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
+                                    <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
+                                </select>
+                            </div>
                         </div>
                         <p></p>
-                        <button type="submit" class="btn btn-primary">Филтрирай</button>
-                        <a asp-action="History" class="btn btn-secondary">Изчисти</a>
+
+                        <!-- Филтриране по дата -->
+                        <div class="row flex-nowrap">
+                            <div class="form-group col-md-6">
+                                <label>Начална дата</label>
+                                <input type="date" name="startDate" class="form-control w-100" value="@ViewData["StartDate"]">
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label>Крайна дата</label>
+                                <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
+                            </div>
+                        </div>
+                        <p></p>
+
+                        <div class="form-group col-md-12">
+                            <button type="submit" class="btn btn-dark">Търси</button>
+                            <a asp-action="History" class="btn btn-secondary">Изчисти</a>
+                        </div>
                     </tr>
                 </thead>
             </table>
         </form>
+
+
         <table class="table">
             <tr class="table-header">
                 <th>Id</th>
@@ -62,3 +107,25 @@
         </table>
     </section>
 }
+<style>
+    .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .container-text {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+        .container-text h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+</style>

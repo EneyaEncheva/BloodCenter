@@ -13,135 +13,6 @@ using System.Security.Claims;
 
 namespace BloodCenter.Controllers
 {
-    //{
-    //    public class RequestsController : Controller
-    //    {
-    //        private readonly ApplicationDbContext _context;
-
-    //        public RequestsController(ApplicationDbContext context)
-    //        {
-    //            _context = context;
-    //        }
-
-    //        // GET: Requests
-    //        public async Task<IActionResult> Index()
-    //        {
-    //            return View(await _context.Requests.ToListAsync());
-    //        }
-
-    //        // GET: Requests/Create
-    //        public IActionResult Create()
-    //        {
-    //            return View();
-    //        }
-
-    //        // POST: Requests/Create
-    //        // To protect from overposting attacks, enable the specific properties you want to bind to.
-    //        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    //        [HttpPost]
-    //        [ValidateAntiForgeryToken]
-    //        public async Task<IActionResult> Create([Bind("Id,Hospital,BloodGroupsId,Quantity,Date,IsAvailable")] Requests requests)
-    //        {
-    //            if (ModelState.IsValid)
-    //            {
-    //                _context.Add(requests);
-    //                await _context.SaveChangesAsync();
-    //                return RedirectToAction(nameof(Index));
-    //            }
-    //            return View(requests);
-    //        }
-
-    //        // GET: Requests/Edit/5
-    //        public async Task<IActionResult> Edit(int? id)
-    //        {
-    //            if (id == null)
-    //            {
-    //                return NotFound();
-    //            }
-
-    //            var requests = await _context.Requests.FindAsync(id);
-    //            if (requests == null)
-    //            {
-    //                return NotFound();
-    //            }
-    //            return View(requests);
-    //        }
-
-    //        // POST: Requests/Edit/5
-    //        // To protect from overposting attacks, enable the specific properties you want to bind to.
-    //        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    //        [HttpPost]
-    //        [ValidateAntiForgeryToken]
-    //        public async Task<IActionResult> Edit(int id, [Bind("Id,Hospital,BloodGroupsId,Quantity,Date,IsAvailable")] Requests requests)
-    //        {
-    //            if (id != requests.Id)
-    //            {
-    //                return NotFound();
-    //            }
-
-    //            if (ModelState.IsValid)
-    //            {
-    //                try
-    //                {
-    //                    _context.Update(requests);
-    //                    await _context.SaveChangesAsync();
-    //                }
-    //                catch (DbUpdateConcurrencyException)
-    //                {
-    //                    if (!RequestsExists(requests.Id))
-    //                    {
-    //                        return NotFound();
-    //                    }
-    //                    else
-    //                    {
-    //                        throw;
-    //                    }
-    //                }
-    //                return RedirectToAction(nameof(Index));
-    //            }
-    //            return View(requests);
-    //        }
-
-    //        // GET: Requests/Delete/5
-    //        public async Task<IActionResult> Delete(int? id)
-    //        {
-    //            if (id == null)
-    //            {
-    //                return NotFound();
-    //            }
-
-    //            var requests = await _context.Requests
-    //                .FirstOrDefaultAsync(m => m.Id == id);
-    //            if (requests == null)
-    //            {
-    //                return NotFound();
-    //            }
-
-    //            return View(requests);
-    //        }
-
-    //        // POST: Requests/Delete/5
-    //        [HttpPost, ActionName("Delete")]
-    //        [ValidateAntiForgeryToken]
-    //        public async Task<IActionResult> DeleteConfirmed(int id)
-    //        {
-    //            var requests = await _context.Requests.FindAsync(id);
-    //            if (requests != null)
-    //            {
-    //                _context.Requests.Remove(requests);
-    //            }
-
-    //            await _context.SaveChangesAsync();
-    //            return RedirectToAction(nameof(Index));
-    //        }
-
-    //        private bool RequestsExists(int id)
-    //        {
-    //            return _context.Requests.Any(e => e.Id == id);
-    //        }
-    //    }
-    //}
-
     //[Authorize(Roles = "MedicalSpecialist,Admin")]
     public class RequestsController : Controller
     {
@@ -152,15 +23,60 @@ namespace BloodCenter.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? bloodGroupId, char? rhesusFactor, DateTime? startDate, DateTime? endDate, string status)
         {
-            var requests = await _context.Requests
-                .Include(r => r.BloodGroup) // Включваме кръвната група
+            var requests = _context.Requests
+                .Include(r => r.BloodGroup)
+                .AsQueryable();
+
+            // Филтриране
+            if (bloodGroupId.HasValue && bloodGroupId > 0)
+            {
+                requests = requests.Where(r => r.BloodGroupId == bloodGroupId);
+            }
+
+            if (rhesusFactor.HasValue)
+            {
+                requests = requests.Where(r => r.RhesusFactor == rhesusFactor.Value);
+            }
+
+            if (startDate.HasValue)
+            {
+                requests = requests.Where(r => r.Date.Date >= startDate.Value.Date);
+            }
+
+            if (endDate.HasValue)
+            {
+                requests = requests.Where(r => r.Date.Date <= endDate.Value.Date);
+            }
+
+            if (!string.IsNullOrEmpty(status))
+            {
+                requests = requests.Where(r => r.Status == status);
+            }
+
+            var bloodGroupCounts = await _context.Requests
+                .Include(r => r.BloodGroup)
+                .GroupBy(r => new { r.BloodGroup.Name, r.RhesusFactor })
+                .Select(g => new { BloodGroupName = g.Key.Name, RhesusFactor = g.Key.RhesusFactor, Count = g.Count() })
+                .OrderByDescending(g => g.Count)  // Сортиране по брой заявки
+                .Take(3)  // Вземаме само топ 3
                 .ToListAsync();
-            return View(await _context.Requests.ToListAsync());
+
+            // Преобразуваме резултата в List<Object> за ViewData
+            ViewData["MostRequestedBloodGroups"] = bloodGroupCounts.Cast<object>().ToList();
+
+            ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
+
+            ViewData["BloodGroupId"] = bloodGroupId;
+            ViewData["RhesusFactor"] = rhesusFactor;
+            ViewData["StartDate"] = startDate?.ToString("yyyy-MM-dd");
+            ViewData["EndDate"] = endDate?.ToString("yyyy-MM-dd");
+            ViewData["Status"] = status;
+
+            return View(await requests.ToListAsync());
         }
 
-        // Медицинско лице подава заявка
         //[Authorize(Roles = "MedicalSpecialist")]
         [HttpGet]
         public IActionResult Create()
@@ -236,59 +152,11 @@ namespace BloodCenter.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-
-        //[HttpGet]
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var requests = await _context.Requests.FindAsync(id);
-        //    if (requests == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(requests);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,Hospital,BloodGroupsId,Quantity,Date,IsAvailable")] Requests requests)
-        //{
-        //    if (id != requests.Id)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(requests);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!RequestsExists(requests.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(requests);
-        //}
-
+        
         public async Task<IActionResult> Delete(int? id)
         {
             var request = await _context.Requests
-                .Include(r => r.BloodGroup) // Включи кръвната група, ако се използва във View-то
+                .Include(r => r.BloodGroup)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (request == null)
