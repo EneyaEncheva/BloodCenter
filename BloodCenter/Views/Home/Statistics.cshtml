@@ -1,0 +1,31 @@
+﻿<section class="section-container">
+    <div class="container-text">
+        <h1>Най-търсени кръвни групи</h1>
+    </div>
+    @if (ViewData["MostRequestedBloodGroups"] != null)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Кръвна група</th>
+                        <th>Брой заявки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var bloodGroup in (IEnumerable<dynamic>)ViewData["MostRequestedBloodGroups"])
+                    {
+                        <tr>
+                            <td>@bloodGroup.BloodGroupName @bloodGroup.RhesusFactor</td>
+                            <td>@bloodGroup.Count</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>Няма данни за най-търсените кръвни групи.</p>
+    }
+</section>

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BloodCenter.Controllers
 {
@@ -39,8 +40,7 @@ namespace BloodCenter.Controllers
             if (!string.IsNullOrEmpty(searched))
             {
                 bloodDonors = bloodDonors.Where(bd =>
-                    bd.User.FirstName.Contains(searched) &&
-                    bd.User.LastName.Contains(searched));
+                    string.Concat(bd.User.FirstName, " ", bd.User.LastName).Contains(searched));
             }
 
             //Филтриране
@@ -274,5 +274,22 @@ namespace BloodCenter.Controllers
 
             return RedirectToAction("AdminPanel", "Admin");
         }
-    }
+
+        [Authorize(Roles = "Donor")]
+        public async Task<IActionResult> MyProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Взимаме ID на текущия потребител
+            var donor = await _context.BloodDonors
+                .Include(d => d.User)
+                .Include(d => d.BloodGroup)
+                //.Include(d => d.DonationHistory)
+                .FirstOrDefaultAsync(d => d.UserId == userId);
+
+            if (donor == null)
+            {
+                return NotFound("Кръводарителят не е намерен.");
+            }
+
+            return View(donor);
+        }    }
 }

@@ -21,8 +21,119 @@ body {
   margin-bottom: 60px;
 }
 
-/*.table-header {
-    background-color: darkblue;
-    color: white;
-    font-weight: bold;
-}*/
+.navbar-nav .nav-link.active {
+    background-color: #c92838 !important;
+    color: black !important;
+    border-radius: 5px;
+}
+/* Основен контейнер за секции */
+.section-container {
+    max-width: 2000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Текстов контейнер */
+.container-text {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .container-text h1 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+/* Филтър контейнер */
+.filter-container, .card {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Стилове за таблици */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .table thead, .table-dark {
+        background-color: #343a40;
+        color: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+.btn-info {
+    margin-bottom: 20px;
+}
+/* Филтри */
+.filter-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+/* Малки бутони */
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* Пагинация */
+.pagination-custom {
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+}
+.profile-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+    .profile-header h2 {
+        color: black;
+        font-weight: bold;
+    }
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+    .profile-info p {
+        font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+
+    .profile-info strong {
+        color: #333;
+    }
+
+

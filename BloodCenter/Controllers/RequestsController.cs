@@ -55,17 +55,6 @@ namespace BloodCenter.Controllers
                 requests = requests.Where(r => r.Status == status);
             }
 
-            var bloodGroupCounts = await _context.Requests
-                .Include(r => r.BloodGroup)
-                .GroupBy(r => new { r.BloodGroup.Name, r.RhesusFactor })
-                .Select(g => new { BloodGroupName = g.Key.Name, RhesusFactor = g.Key.RhesusFactor, Count = g.Count() })
-                .OrderByDescending(g => g.Count)  // Сортиране по брой заявки
-                .Take(3)  // Вземаме само топ 3
-                .ToListAsync();
-
-            // Преобразуваме резултата в List<Object> за ViewData
-            ViewData["MostRequestedBloodGroups"] = bloodGroupCounts.Cast<object>().ToList();
-
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
 
             ViewData["BloodGroupId"] = bloodGroupId;
@@ -130,18 +119,34 @@ namespace BloodCenter.Controllers
 
             if (status == "Одобрена")
             {
-                var supply = await _context.Supplies.FirstOrDefaultAsync(s => s.BloodGroupId == request.BloodGroupId);
+                var supply = await _context.Supplies
+                    .FirstOrDefaultAsync(s => s.BloodGroupId == request.BloodGroupId && s.RhesusFactor == request.RhesusFactor);
+
                 if (supply != null && supply.Quantity >= request.Quantity)
                 {
+                    // Ако има достатъчно кръв от търсената група, намаляваме от нея
                     supply.Quantity -= request.Quantity;
                     request.Status = "Одобрена";
-                    request.ExecutionDate = DateTime.Now;
                 }
                 else
                 {
-                    request.Status = "Няма достатъчно кръв";
-                    request.ExecutionDate = DateTime.Now;
+                    // Ако няма достатъчно кръв от търсената група, проверяваме 0-
+                    var universalDonor = await _context.Supplies
+                        .FirstOrDefaultAsync(s => s.BloodGroup.Name == "0" && s.RhesusFactor == '-');
+
+                    if (universalDonor != null && universalDonor.Quantity >= request.Quantity)
+                    {
+                        // Използваме 0- кръв, ако е налична
+                        universalDonor.Quantity -= request.Quantity;
+                        request.Status = "Одобрена (използвана 0-)";
+                    }
+                    else
+                    {
+                        request.Status = "Няма достатъчно кръв";
+                    }
                 }
+
+                request.ExecutionDate = DateTime.Now;
             }
             else
             {
@@ -152,7 +157,8 @@ namespace BloodCenter.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-        
+
+
         public async Task<IActionResult> Delete(int? id)
         {
             var request = await _context.Requests

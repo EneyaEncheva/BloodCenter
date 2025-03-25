@@ -4,79 +4,102 @@
     ViewData["Title"] = "Редактиране на кръводарител";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center text-danger fw-bold">@ViewData["Title"]</h2>
+            <p class="text-center text-muted">Моля, попълнете всички полета</p>
+            <form method="post" asp-action="EditBloodDonor">
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form method="post" asp-action="EditBloodDonor">
-            <h2>Редактиране.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <input type="hidden" asp-for="Id" />
 
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="UserName">Потребителско име</label>
-                <input asp-for="UserName" class="form-control" required />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="UserName">Потребителско име</label>
+                            <input asp-for="UserName" class="form-control" required />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="Email">Електронна поща</label>
-                <input asp-for="Email" type="email" class="form-control" required />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Email">Електронна поща</label>
+                            <input asp-for="Email" type="email" class="form-control" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="FirstName">Име</label>
-                <input asp-for="FirstName" class="form-control" required />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="FirstName">Име</label>
+                            <input asp-for="FirstName" class="form-control" required />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label asp-for="LastName">Фамилия</label>
-                <input asp-for="LastName" class="form-control" required />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewPassword">Нова Парола</label>
-                <input asp-for="NewPassword" class="form-control" required />
-                <span asp-validation-for="NewPassword" class="text-danger"></span>
-            </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="LastName">Фамилия</label>
+                            <input asp-for="LastName" class="form-control" required />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Age">Възраст</label>
-                <input asp-for="Age" type="number" min="18" class="form-control"/>
-                <span asp-validation-for="Age" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label for="BloodGroupsId">Кръвна група</label>
-                <select asp-for="BloodGroupsId"
-                        asp-items="@ViewBag.BloodGroups"
-                        class="form-control">
-                    <option selected class="fw-bold">Кръвна група</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label asp-for="NewPassword">Нова Парола</label>
+                    <input asp-for="NewPassword" class="form-control" required />
+                    <span asp-validation-for="NewPassword" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="RhesusFactor"></label>
-                <select asp-for="RhesusFactor" class="form-control">
-                    <option value="+">Положителен (+)</option>
-                    <option value="-" selected="@(Model.RhesusFactor == '-')">Отрицателен (-)</option>
-                </select>
-                <span asp-validation-for="RhesusFactor" class="text-danger"></span>
-            </div>
+                <div class="form-group">
+                    <label asp-for="Age">Възраст</label>
+                    <input asp-for="Age" type="number" min="18" max="65" class="form-control" />
+                    <span asp-validation-for="Age" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <label asp-for="Contacts">Контакти</label>
-                <input asp-for="Contacts" class="form-control" required />
-                <span asp-validation-for="Contacts" class="text-danger"></span>
-            </div>
-            
-            <input type="hidden" asp-for="Password" value="@Model.Password" />
-            <p></p>
-            <button type="submit" class="btn btn-primary">Запази</button>
-            <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
-        </form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="BloodGroupsId">Кръвна група</label>
+                            <select asp-for="BloodGroupsId"
+                                    asp-items="@ViewBag.BloodGroups"
+                                    class="form-control">
+                                <option selected class="fw-bold">Кръвна група</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="RhesusFactor"></label>
+                            <select asp-for="RhesusFactor" class="form-control">
+                                <option value="+">Положителен (+)</option>
+                                <option value="-" selected="@(Model.RhesusFactor == '-')">Отрицателен (-)</option>
+                            </select>
+                            <span asp-validation-for="RhesusFactor" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Contacts">Контакти</label>
+                    <input asp-for="Contacts" class="form-control" required />
+                    <span asp-validation-for="Contacts" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="Password" value="@Model.Password" />
+                <p></p>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger shadow-sm">Запази</button>
+                    <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

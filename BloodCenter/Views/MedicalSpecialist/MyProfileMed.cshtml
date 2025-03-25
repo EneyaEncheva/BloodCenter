@@ -1,0 +1,12 @@
+﻿<div class="profile-container">
+
+    <div class="profile-header">
+        <h2>Моят профил</h2>
+    </div>
+
+    <div class="profile-info">
+        <p><strong>Име:</strong> <span>@Model.FirstName @Model.LastName</span></p>
+        <p><strong>Имейл:</strong> <span>@Model.Email</span></p>
+        <p><strong>Роля:</strong> <span>@(User.IsInRole("Admin") ? "Администратор" : "Медицинско лице")</span></p>
+    </div>
+</div>

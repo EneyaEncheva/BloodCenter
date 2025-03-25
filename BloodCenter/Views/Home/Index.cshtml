@@ -1,103 +1,53 @@
-﻿@* <!DOCTYPE html>
-<html lang="bg">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кръводарителски Център</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: beige;
-        }
-
-        .hero {
-            background: url('C:\Users\User\Documents\Diplomna\darikruv.jpg') center/cover;
-            color: black;
-            text-align: center;
-            padding: 100px 20px;
-        }
-
-        .btn-donate {
-            background-color: #dc3545;
-            color: white;
-            font-size: 20px;
-            padding: 15px 30px;
-            border-radius: 10px;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn-dark:hover {
-            background-color: #c82333;
-        }
-    </style>
-</head>
-<body>
-    <header class="hero">
-        <h1>Дарете кръв, спасете живот!</h1>
-        <p>Вашата кръв може да спаси нечий живот. Направете разликата още днес.</p>
-        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-donate">Стани дарител</a>
-    </header>
-
-    <section class="container my-5">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <h3>Защо да дарите кръв?</h3>
-                <p>Една кръвна дарителска сесия може да спаси до три живота. Даряването на кръв е безопасно и отнема само 15 минути.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <h3>Кой може да дарява?</h3>
-                <p>Всеки здрав човек между 18 и 65 години, с тегло над 50 кг, може да стане кръводарител.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <h3>Как да даря?</h3>
-                <p>Посетете най-близкия кръводарителен център или организирана кръводарителска акция във вашия град.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="container text-center my-5">
-        <h2>Най-търсени кръвни групи</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Кръвна група</th>
-                    <th>Брой заявки</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (ViewData["MostRequestedBloodGroups"] != null)
-                {
-                    @foreach (var item in (IEnumerable<dynamic>)ViewData["MostRequestedBloodGroups"])
-                    {
-                        <tr>
-                            <td>@item.BloodGroupName @(item.RhesusFactor == '+' ? "+" : "-")</td>
-                            <td>@item.Count</td>
-                        </tr>
-                    }
-                }
-                else
-                {
-                    <tr><td colspan="3" class="text-center">Няма налични данни</td></tr>
-                }
-            </tbody>
-        </table>
-    </section>
-</body>
-</html>
- *@
-
-
-@{
+﻿@{
     ViewData["Title"] = "Кръводарителски център";
 }
 
-<div class="container text-center mt-5">
-    <h1 class="display-4 text-danger">Дари кръв, спаси живот!</h1>
-    <p class="lead">Вашата кръв може да спаси нечий живот. Направете разликата още днес.</p>
-    <a class="btn btn-danger btn-lg mt-3" asp-controller="Donate" asp-action="Index">Donate Now</a>
+<div class="container mt-4">
+    <div class="row align-items-center">
+        <div class="col-md-4">
+            <img src="~/blood-donation.png" class="img-fluid rounded" alt="Кръводаряване" />
+        </div>
+        <div class="col-md-5">
+            <h2 class="display-3 text-danger animate-text no-wrap">Дари кръв, спаси живот!</h2>
+            <p class="lead animate-text">Вашата кръв може да спаси нечий живот. Направете разликата още днес.</p>
+        </div>
+    </div>
 </div>
+
+<style>
+    .animate-text {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: opacity 1s ease-out, transform 1s ease-out;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+    }
+    .animate-text.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .no-wrap {
+        white-space: nowrap;
+    }
+
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const textElements = document.querySelectorAll(".animate-text");
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        }, { threshold: 0.5 });
+
+        textElements.forEach(el => observer.observe(el));
+    });
+</script>
+
 
 <div class="container mt-5">
     <h2 class="text-center text-primary">Кой може да дарява?</h2>
@@ -117,11 +67,21 @@
         <div class="col-md-4">
             <div class="card p-3 shadow">
                 <h3>Здраве</h3>
-                <p>Кръводарителят трябва да бъде напълно здрав.</p>
+                <p>Кръводарителят трябва да бъде напълно здрав и даряването да не застрашава живота му.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mt-3">
+        <div class="">
+            <div class="card p-3 shadow">
+                <h3>Медицински изследвания</h3>
+                <p>След даряване кръвта се изследва за инфекции като хепатит B и C, ХИВ, СПИН, сифилис, туберкулоза, токсоплазмоза, бруцелоза, отосклероза, както и за определяне на кръвната група и хемоглобинът.</p>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="container mt-5">
     <h2 class="text-center text-primary">Таблица за съвместимост на кръвта</h2>

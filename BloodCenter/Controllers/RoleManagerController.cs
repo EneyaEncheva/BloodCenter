@@ -27,6 +27,5 @@ namespace BloodCenter.Controllers
             }
             return RedirectToAction("Index");
         }
-        
     }
 }

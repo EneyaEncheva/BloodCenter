@@ -6,9 +6,24 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Здравей, @UserManager.GetUserName(User)!</a>
-    </li>
+        @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
+        {
+            <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="MedicalSpecialist" asp-action="MyProfileMed" title="Manage">
+                    Здравей, @User.Identity.Name!
+                </a>
+            </li>
+        }
+        @if (User.IsInRole("Donor"))
+        {
+            <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="Admin" asp-action="MyProfile" title="Manage">
+                    Здравей, @User.Identity.Name!
+                </a>
+            </li>
+        }
+        
+
     <li class="nav-item">
         <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Изход</button>

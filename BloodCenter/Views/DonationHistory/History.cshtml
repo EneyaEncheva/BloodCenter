@@ -3,129 +3,107 @@
 @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
 {
     <section class="section-container">
-        <div class="container-text text-title">
+        <div class="container-text">
             <h1>История на даренията</h1>
         </div>
-        <a class="text-white btn btn-info" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
-        <p></p>
 
-        <form method="get">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <div class="row flex-nowrap">
-                            <!-- Филтриране по търсене по име и фамилия -->
-                            <div class="form-group col-md-4">
-                                <label>Търсене по име или фамилия</label>
-                                <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
-                            </div>
+        <a class="btn btn-info text-white mb-3" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
 
-                            <!-- Филтриране по кръвна група -->
-                            <div class="form-group col-md-4">
-                                <label>Кръвна група</label>
-                                <select name="bloodGroupId" class="form-control">
-                                    <option value="">-- Всички кръвни групи --</option>
-                                    @if (ViewData["BloodGroups"] != null)
-                                    {
-                                        foreach (var group in (SelectList)ViewData["BloodGroups"])
-                                        {
-                                            <option value="@group.Value" selected="@(group.Value == ViewData["BloodGroupId"]?.ToString() ? "selected" : null)">
-                                                @group.Text
-                                            </option>
-                                        }
-                                    }
-                                </select>
-                            </div>
+        <!-- Филтър -->
+        <div class="card p-3 mb-4">
+            <form method="get">
+                <div class="row">
+                    <!-- Търсене по име и фамилия -->
+                    <div class="form-group col-md-4">
+                        <label>Търсене по име и фамилия</label>
+                        <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име и фамилия">
+                    </div>
 
-                            <!-- Филтриране по резус-фактор -->
-                            <div class="form-group col-md-4">
-                                <label>Резус-фактор</label>
-                                <select name="rhesusFactor" class="form-control">
-                                    <option value="">-- Всички резус-фактори --</option>
-                                    <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
-                                    <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
-                                </select>
-                            </div>
-                        </div>
-                        <p></p>
+                    <!-- Филтриране по кръвна група -->
+                    <div class="form-group col-md-4">
+                        <label>Кръвна група</label>
+                        <select name="bloodGroupId" class="form-control">
+                            <option value="">-- Всички кръвни групи --</option>
+                            @if (ViewData["BloodGroups"] != null)
+                            {
+                                foreach (var group in (SelectList)ViewData["BloodGroups"])
+                                {
+                                    <option value="@group.Value" selected="@(group.Value == ViewData["BloodGroupId"]?.ToString() ? "selected" : null)">
+                                        @group.Text
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
 
-                        <!-- Филтриране по дата -->
-                        <div class="row flex-nowrap">
-                            <div class="form-group col-md-6">
-                                <label>Начална дата</label>
-                                <input type="date" name="startDate" class="form-control w-100" value="@ViewData["StartDate"]">
-                            </div>
+                    <!-- Филтриране по резус-фактор -->
+                    <div class="form-group col-md-4">
+                        <label>Резус-фактор</label>
+                        <select name="rhesusFactor" class="form-control">
+                            <option value="">-- Всички резус-фактори --</option>
+                            <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
+                            <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
+                        </select>
+                    </div>
+                </div>
 
-                            <div class="form-group col-md-6">
-                                <label>Крайна дата</label>
-                                <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
-                            </div>
-                        </div>
-                        <p></p>
+                <div class="row">
+                    <!-- Филтриране по дата -->
+                    <div class="form-group col-md-6">
+                        <label>Начална дата</label>
+                        <input type="date" name="startDate" class="form-control" value="@ViewData["StartDate"]">
+                    </div>
 
-                        <div class="form-group col-md-12">
-                            <button type="submit" class="btn btn-dark">Търси</button>
-                            <a asp-action="History" class="btn btn-secondary">Изчисти</a>
-                        </div>
-                    </tr>
-                </thead>
-            </table>
-        </form>
+                    <div class="form-group col-md-6">
+                        <label>Крайна дата</label>
+                        <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-dark">Търси</button>
+                    <a asp-action="History" class="btn btn-secondary ml-2">Изчисти</a>
+                </div>
+            </form>
+        </div>
 
-
+        <!-- Таблица с историята на даренията -->
         <table class="table">
-            <tr class="table-header">
-                <th>Id</th>
-                <th>Кръводарител</th>
-                <th>Кръвна група</th>
-                <th>Резус-фактор</th>
-                <th>Дата на дарение</th>
-                <th>Количество</th>
-                <th>Опции</th>
-            </tr>
-
-            @if (Model == null)
-            {
-                <p class="text-danger">Няма налични дарения.</p>
-                return;
-            }
-
-            @foreach (var donationHistory in Model)
-            {
+            <thead class="table-dark">
                 <tr>
-                    <th>@donationHistory.Id</th>
-                    <td>@donationHistory.BloodDonor.User.FirstName @donationHistory.BloodDonor.User.LastName</td>@* ??? *@
-                    <td>@donationHistory.BloodDonor.BloodGroup.Name</td>
-                    <td>@donationHistory.BloodDonor.RhesusFactor</td>
-                    <td>@donationHistory.DonationDate.ToShortDateString()</td>
-                    <td>@donationHistory.Quantity ml</td>
-                    <td>
-                        <a class="btn btn-danger" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">Изтриване</a>
-                    </td>
+                    <th>№</th>
+                    <th>Кръводарител</th>
+                    <th>Кръвна група</th>
+                    <th>Резус-фактор</th>
+                    <th>Дата на дарение</th>
+                    <th>Количество</th>
+                    <th>Опции</th>
                 </tr>
-            }
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">Няма налични дарения.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var donationHistory in Model)
+                    {
+                        <tr>
+                            <td>@donationHistory.Id</td>
+                            <td>@donationHistory.BloodDonor.User.FirstName @donationHistory.BloodDonor.User.LastName</td>
+                            <td>@donationHistory.BloodDonor.BloodGroup.Name</td>
+                            <td>@donationHistory.BloodDonor.RhesusFactor</td>
+                            <td>@donationHistory.DonationDate.ToShortDateString()</td>
+                            <td>@donationHistory.Quantity мл</td>
+                            <td>
+                                <a class="btn btn-outline-danger btn-sm" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">Изтриване</a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
         </table>
     </section>
 }
-<style>
-    .row {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .container-text {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-        .container-text h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-</style>

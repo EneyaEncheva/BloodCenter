@@ -1,168 +1,113 @@
 ﻿@model IEnumerable<BloodCenter.Models.Requests>
 
 <section class="section-container">
-    <div class="container-text text-title">
+    <div class="container-text">
         <h1>Заявки</h1>
     </div>
-    <p>
-        <a class="text-white btn btn-info" asp-area="" asp-controller="Requests" asp-action="Create">Прати заявка</a>
-    </p>
 
-    <h3>Най-търсени кръвни групи:</h3>
-    @if (ViewData["MostRequestedBloodGroups"] != null)
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Кръвна група</th>
-                    <th>Брой заявки</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in (List<object>)ViewData["MostRequestedBloodGroups"])
-                {
-                    var bloodGroup = (dynamic)item; // Преобразуваме към динамичен обект
-                    <tr>
-                        <td>@bloodGroup.BloodGroupName @bloodGroup.RhesusFactor</td>
-                        <td>@bloodGroup.Count</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>Няма данни за най-търсените кръвни групи.</p>
-    }
+    <a class="text-white btn btn-info" asp-area="" asp-controller="Requests" asp-action="Create">Прати заявка</a>
 
 
-    <form method="get">
-        <table class="table">
-            <thead>
-                <tr>
-                    <!-- Филтриране по кръвна група и резус-фактор (в един ред) -->
-                    <div class="row flex-nowrap justify-content-between">
-                        <div class="form-group col-md-6">
-                            <label>Кръвна група</label>
-                            <select name="bloodGroupId" class="form-control">
-                                <option value="">-- Всички кръвни групи --</option>
-                                @if (ViewData["BloodGroups"] != null)
-                                {
-                                    foreach (var group in (SelectList)ViewData["BloodGroups"])
-                                    {
-                                        <option value="@group.Value" selected="@(group.Value == ViewData["BloodGroupId"]?.ToString() ? "selected" : null)">
-                                            @group.Text
-                                        </option>
-                                    }
-                                }
-                            </select>
-                        </div>
+    <div class="card p-3 mb-4">
+        <form method="get">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label>Кръвна група</label>
+                    <select name="bloodGroupId" class="form-control">
+                        <option value="">-- Всички кръвни групи --</option>
+                        @if (ViewData["BloodGroups"] != null)
+                        {
+                            foreach (var group in (SelectList)ViewData["BloodGroups"])
+                            {
+                                <option value="@group.Value" selected="@(group.Value == ViewData["BloodGroupId"]?.ToString() ? "selected" : null)">
+                                    @group.Text
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
 
-                        <div class="form-group col-md-6">
-                            <label>Резус-фактор</label>
-                            <select name="rhesusFactor" class="form-control">
-                                <option value="">-- Всички резус-фактори --</option>
-                                <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
-                                <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <p></p>
-                    <!-- Филтриране по дата и статус (в друг ред) -->
-                    <div class="row flex-nowrap">
-                        <div class="form-group col-md-4">
-                            <label>Начална дата</label>
-                            <input type="date" name="startDate" class="form-control w-100" value="@ViewData["StartDate"]">
-                        </div>
+                <div class="form-group col-md-6">
+                    <label>Резус-фактор</label>
+                    <select name="rhesusFactor" class="form-control">
+                        <option value="">-- Всички резус-фактори --</option>
+                        <option value="+" selected="@(ViewData["RhesusFactor"]?.ToString() == "+" ? "selected" : null)">Положителен (+)</option>
+                        <option value="-" selected="@(ViewData["RhesusFactor"]?.ToString() == "-" ? "selected" : null)">Отрицателен (-)</option>
+                    </select>
+                </div>
+            </div>
 
-                        <div class="form-group col-md-4">
-                            <label>Крайна дата</label>
-                            <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label>Статус</label>
-                            <select name="status" class="form-control">
-                                <option value="">-- Всички статуси --</option>
-                                <option value="Одобрена" selected="@(ViewData["Status"]?.ToString() == "Одобрена" ? "selected" : null)">Одобрена</option>
-                                <option value="Отхвърлена" selected="@(ViewData["Status"]?.ToString() == "Отхвърлена" ? "selected" : null)">Отхвърлена</option>
-                                <option value="В процес на изпълнение" selected="@(ViewData["Status"]?.ToString() == "В процес на изпълнение" ? "selected" : null)">В процес</option>
-                            </select>
-                        </div>
-                    </div>
-                    <p></p>
-                    <div class="form-group col-md-12">
-                        <button type="submit" class="btn btn-dark">Търси</button>
-                        <a asp-action="Index" class="btn btn-secondary">Изчисти</a>
-                    </div>
-                </tr>
-            </thead>
-        </table>
-    </form>
-
-    <p></p>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label>Начална дата</label>
+                    <input type="date" name="startDate" class="form-control" value="@ViewData["StartDate"]">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Крайна дата</label>
+                    <input type="date" name="endDate" class="form-control" value="@ViewData["EndDate"]">
+                </div>
+                <div class="form-group col-md-4">
+                    <label>Статус</label>
+                    <select name="status" class="form-control">
+                        <option value="">-- Всички статуси --</option>
+                        <option value="Одобрена" selected="@(ViewData["Status"]?.ToString() == "Одобрена" ? "selected" : null)">Одобрена</option>
+                        <option value="Отхвърлена" selected="@(ViewData["Status"]?.ToString() == "Отхвърлена" ? "selected" : null)">Отхвърлена</option>
+                        <option value="В процес на изпълнение" selected="@(ViewData["Status"]?.ToString() == "В процес на изпълнение" ? "selected" : null)">В процес</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark">Търси</button>
+                <a asp-action="Index" class="btn btn-secondary ml-2">Изчисти</a>
+            </div>
+        </form>
+    </div>
 
     <table class="table">
-        <tr>
-            <th>Лечебно заведение</th>
-            <th>Кръвна група</th>
-            <th>Резус-фактор</th>
-            <th>Количество</th>
-            <th>Дата на заявката </th>
-            <th>Статус</th>
-            <th>Дата на изпълнение</th>
-            <th> </th>
-        </tr>
-
-        @foreach (var request in Model)
-        {
+        <thead class="table-dark">
             <tr>
-                <td>@request.Hospital</td>
-                <td>@(request.BloodGroup != null ? request.BloodGroup.Name : "Няма данни")</td>
-
-                <td>@request.RhesusFactor</td>
-                <td>@request.Quantity мл</td>
-                <td>@request.Date.ToShortDateString()</td>
-                <td>@request.Status</td>
-                <td>@(request.ExecutionDate?.ToShortDateString() ?? "-")</td>
-                <td>
-                    @if (request.Status == "В процес на изпълнение")
-                    {
-                        <form asp-action="UpdateStatus" method="post">
-                            <input type="hidden" name="id" value="@request.Id">
-                            <button type="submit" name="status" value="Одобрена" class="btn btn-success">Одобри</button>
-                            <button type="submit" name="status" value="Отхвърлена" class="btn btn-danger">Откажи</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <span> </span>
-                    }
-                </td>
+                <th>Лечебно заведение</th>
+                <th>Кръвна група</th>
+                <th>Резус-фактор</th>
+                <th>Количество (сак)</th>
+                <th>Дата на заявката</th>
+                <th>Статус</th>
+                <th>Дата на изпълнение</th>
+                <th></th>
             </tr>
-        }
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-danger">Няма заявки.</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var request in Model)
+                {
+                    <tr>
+                        <td>@request.Hospital</td>
+                        <td>@(request.BloodGroup != null ? request.BloodGroup.Name : "Няма данни")</td>
+                        <td>@request.RhesusFactor</td>
+                        <td>@request.Quantity</td>
+                        <td>@request.Date.ToShortDateString()</td>
+                        <td>@request.Status</td>
+                        <td>@(request.ExecutionDate?.ToShortDateString() ?? "-")</td>
+                        <td>
+                            @if (request.Status == "В процес на изпълнение")
+                            {
+                                <form asp-action="UpdateStatus" method="post" class="d-flex gap-2">
+                                    <input type="hidden" name="id" value="@request.Id">
+                                    <button type="submit" name="status" value="Одобрена" class="btn btn-success">Одобри</button>
+                                    <button type="submit" name="status" value="Отхвърлена" class="btn btn-danger">Откажи</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
     </table>
 </section>
-<style>
-    .row {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .container-text {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-        .container-text h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-</style>
-

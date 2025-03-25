@@ -3,44 +3,65 @@
     ViewData["Title"] = "Регистриране на медицински специалист";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center text-danger fw-bold">@ViewData["Title"]</h2>
+            <p class="text-center text-muted">Моля, попълнете всички полета</p>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="AddMedicalSpecialist" method="post">
-            <h2>Създаване на нов акаунт.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="UserName" class="form-control" autocomplete="username" aria-required="true" placeholder="username" />
-                <label asp-for="UserName">Потребителско име</label>
-                <span asp-validation-for="UserName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="FirstName" class="form-control" autocomplete="given-name" aria-required="true" placeholder="name" />
-                <label asp-for="FirstName">Име</label>
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
+            <form asp-action="AddMedicalSpecialist" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger text-center" role="alert"></div>
 
-            <div class="form-floating mb-3">
-                <input asp-for="LastName" class="form-control" autocomplete="family-name" aria-required="true" placeholder="surname" />
-                <label asp-for="LastName">Фамилия</label>
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Email">Електронна поща</label>
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Password">Парола</label>
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                <!-- Потребителско име -->
+                <div class="form-floating mb-3">
+                    <input asp-for="UserName" class="form-control" autocomplete="username" placeholder="Потребителско име" />
+                    <label asp-for="UserName">Потребителско име</label>
+                    <span asp-validation-for="UserName" class="text-danger"></span>
+                </div>
 
-            <button id="registerSubmit" type="submit" class="btn btn-primary">Регистрация</button>
-            <a asp-action="MedicalSpecialist" asp-controller="MedicalSpecialist" class="btn btn-secondary">Отказ</a>
-        </form>
+                <!-- Имена (на един ред) -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="FirstName" class="form-control" autocomplete="given-name" placeholder="Име" />
+                            <label asp-for="FirstName">Име</label>
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="LastName" class="form-control" autocomplete="family-name" placeholder="Фамилия" />
+                            <label asp-for="LastName">Фамилия</label>
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Имейл и парола (на един ред) -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" type="email" class="form-control" autocomplete="email" placeholder="name@example.com" />
+                            <label asp-for="Email">Електронна поща</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" type="password" class="form-control" autocomplete="new-password" placeholder="Парола" />
+                            <label asp-for="Password">Парола</label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Бутоните за регистрация и отказ -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger shadow-sm">Регистрация</button>
+                    <a asp-action="MedicalSpecialist" asp-controller="MedicalSpecialist" class="btn btn-secondary">Отказ</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

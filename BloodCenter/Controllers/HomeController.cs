@@ -19,27 +19,28 @@ namespace BloodCenter.Controllers
 
         public async Task<IActionResult> Index()
         {
+            return View();
+        }
+
+        public async Task<IActionResult> Statistics()
+        {
             var bloodGroupCounts = await _context.Requests
                 .Include(r => r.BloodGroup)
-                .GroupBy(r => new { r.BloodGroup.Name, r.RhesusFactor }) // Групиране и по резус-фактор
+                .GroupBy(r => new { r.BloodGroup.Name, r.RhesusFactor })
                 .Select(g => new
                 {
                     BloodGroupName = g.Key.Name,
-                    g.Key.RhesusFactor, // Добавено
+                    RhesusFactor = g.Key.RhesusFactor, // Явно посочваме, за да избегнем проблеми
                     Count = g.Count()
                 })
                 .OrderByDescending(g => g.Count)
                 .Take(3)
                 .ToListAsync();
 
-            ViewData["MostRequestedBloodGroups"] = bloodGroupCounts;
-            return View(bloodGroupCounts);
-        }
-
-        public IActionResult Privacy()
-        {
+            ViewData["MostRequestedBloodGroups"] = bloodGroupCounts; // Запазваме като IEnumerable<dynamic>
             return View();
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

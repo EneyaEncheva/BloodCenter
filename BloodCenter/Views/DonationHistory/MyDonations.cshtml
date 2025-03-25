@@ -1,34 +1,77 @@
 ﻿@model IEnumerable<DonationHistory>
 
 <section class="section-container">
-    <div class="container-text text-title">
+    <div class="container-text">
         <h1>Моята история на дарения</h1>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Дата на дарение</th>
-                <th>Количество</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (!Model.Any())
-            {
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td colspan="2" class="text-center text-danger">Все още нямате дарения.</td>
+                    <th>Дата на дарение</th>
+                    <th>Количество (мл)</th>
                 </tr>
-            }
-            else
-            {
-                @foreach (var donation in Model)
+            </thead>
+            <tbody>
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td>@donation.DonationDate.ToShortDateString()</td>
-                        <td>@donation.Quantity ml</td>
+                        <td colspan="2" class="text-center text-danger">Все още нямате дарения.</td>
                     </tr>
                 }
-            }
-        </tbody>
-    </table>
+                else
+                {
+                    @foreach (var donation in Model)
+                    {
+                        <tr>
+                            <td>@donation.DonationDate.ToShortDateString()</td>
+                            <td>@donation.Quantity</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </section>
+
+<style>
+    .section-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .container-text {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .container-text h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+        .table thead {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .text-danger {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+</style>

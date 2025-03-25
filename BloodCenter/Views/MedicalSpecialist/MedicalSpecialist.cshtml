@@ -3,30 +3,26 @@
 @if (User.IsInRole("Admin"))
 {
     <section class="section-container">
-        <div class="container-text text-title">
+        <div class="container-text">
             <h1>Медицински специалисти</h1>
         </div>
 
         <a class="text-white btn btn-info" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
-        <form asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist" method="get">
-            <p></p>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <div class="form-group col-md-3">
-                            <label>Търсене по име или фамилия</label>
-                            <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име или фамилия">
-                            <p></p>
-                            <button type="submit" class="btn btn-dark">
-                                Търси&nbsp;
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <a asp-action="MedicalSpecialist" class="btn btn-secondary">Изчисти</a>
-                        </div>
-                    </tr>
-                </thead>
-            </table>
-        </form>
+
+        <div class="card p-3 mb-4">
+            <form method="get">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label>Търсене по име и фамилия</label>
+                        <input type="search" name="searched" class="form-control" value="@ViewData["Searched"]" placeholder="Въведете име и фамилия">
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-dark ml-2">Търси</button>
+                        <a asp-action="MedicalSpecialist" class="btn btn-secondary ml-2">Изчисти</a>
+                    </div>
+                </div>
+            </form>
+        </div>
         <table class="table">
             <thead>
                 <tr>
@@ -34,52 +30,33 @@
                     <th>Електронна поща</th>
                     <th>Име</th>
                     <th>Фамилия</th>
-                    <th>Oпции</th>
+                    <th>Опции</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model == null)
-                {
-                    <p class="text-danger">Няма налични медицински специалисти.</p>
-                    return;
-                }
-                @foreach (var medicalSpecialist in Model)
+                @if (Model == null || !Model.Any())
                 {
                     <tr>
-                        <td>@medicalSpecialist.UserName</td>
-                        <td>@medicalSpecialist.Email</td>
-                        <td>@medicalSpecialist.FirstName</td>
-                        <td>@medicalSpecialist.LastName</td>
-                        <th>
-                            <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Редактиране</a>
-                            <a class="btn btn-outline-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Изтриване</a>
-                        </th>
+                        <td colspan="5" class="text-center text-danger">Няма налични медицински специалисти.</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var medicalSpecialist in Model)
+                    {
+                        <tr>
+                            <td>@medicalSpecialist.UserName</td>
+                            <td>@medicalSpecialist.Email</td>
+                            <td>@medicalSpecialist.FirstName</td>
+                            <td>@medicalSpecialist.LastName</td>
+                            <td>
+                                <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Редактиране</a>
+                                <a class="btn btn-outline-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Изтриване</a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </section>
 }
-
-<style>
-    .row {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .container-text {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-        .container-text h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-</style>

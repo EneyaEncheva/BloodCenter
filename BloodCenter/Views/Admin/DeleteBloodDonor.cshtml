@@ -4,24 +4,26 @@
     ViewData["Title"] = "Изтриване на кръводарител";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <h3 class="text-muted">Сигурни ли сте, че искате да изтриете този кръводарител?</h3>
 
-<h3>Сигурни ли сте, че искате да изтриете този кръводарител?</h3>
-<p></p>
-<div>
-    <p><strong>Потребителско име:</strong> @Model.UserName</p>
-    <p><strong>Електронна поща:</strong> @Model.Email</p>
-    <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
-    <p><strong>Възраст:</strong> @Model.Age</p>
-    <p><strong>Кръвна група:</strong> @Model.BloodGroupName</p>@* //?? *@
-    <p><strong>Резус фактор:</strong> @(Model.RhesusFactor == '+' ? "Положителен (+)" : "Отрицателен (-)")</p>
-    <p><strong>Контакти:</strong> @Model.Contacts</p>
+    <div class="card shadow-lg border-danger">
+        <div class="card-body">
+            <h5 class="card-title"><strong>@Model.FirstName @Model.LastName</strong></h5>
+            <p class="card-text"><strong>Потребителско име:</strong> @Model.UserName</p>
+            <p class="card-text"><strong>Електронна поща:</strong> @Model.Email</p>
+            <p class="card-text"><strong>Възраст:</strong> @Model.Age години</p>
+            <p class="card-text"><strong>Кръвна група:</strong> @Model.BloodGroupName</p>
+            <p class="card-text"><strong>Резус фактор:</strong> @(Model.RhesusFactor == '+' ? "Положителен (+)" : "Отрицателен (-)")</p>
+            <p class="card-text"><strong>Контакти:</strong> @Model.Contacts</p>
+        </div>
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post" asp-antiforgery="true" class="mt-4">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="Password" />
+        <button type="submit" class="btn btn-danger me-2">Изтрий</button>
+        <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
+    </form>
 </div>
-
-<form asp-action="DeleteConfirmed" method="post">
-    <input type="hidden" asp-for="Id" value="@Model.Id" />
-    <input type="hidden" asp-for="Password" value="@Model.Password" />
-    <button type="submit" class="btn btn-danger">Изтрий</button>
-    <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
-</form>
-

@@ -1,51 +1,38 @@
-﻿@model IEnumerable<Supply>
-
-<section class="section-container">
-    <div class="container-text text-title">
+﻿<section class="section-container">
+    <div class="container-text">
         <h1>Наличности на кръв</h1>
     </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Кръвна група</th>
-                <th>Резус-фактор</th>
-                <th>Количество (мл)</th>
-                <th>Дата на актуализация</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var supply in Model)
-            {
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>@supply.BloodGroup.Name</td> <!-- Кръвната група -->
-                    <td>@supply.RhesusFactor</td> <!-- Резус-фактор -->
-                    <td>@supply.Quantity</td> <!-- Количество -->
-                    <td>@supply.LastUpdated.ToShortDateString()</td> <!-- Дата на актуализация -->
+                    <th>Кръвна група</th>
+                    <th>Резус-фактор</th>
+                    <th>Количество (сак)</th>
+                    <th>Дата на актуализация</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @if (Model == null || !(Model as List<Supply>)?.Any() == true)
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-danger">Няма наличности.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var supply in Model)
+                    {
+                        <tr>
+                            <td>@supply.BloodGroup.Name</td>
+                            <td>@supply.RhesusFactor</td>
+                            <td>@supply.Quantity</td>
+                            <td>@supply.LastUpdated.ToShortDateString()</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
 </section>
-<style>
-    .row {
-        display: flex;
-        justify-content: space-between;
-        gap: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 20px;
-    }
-
-    .container-text {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-        .container-text h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-</style>

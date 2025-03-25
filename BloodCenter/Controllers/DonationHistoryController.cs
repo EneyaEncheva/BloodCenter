@@ -37,8 +37,7 @@ namespace BloodCenter.Controllers
             {
                 string lowerSearched = searched.ToLower();
                 donations = donations.Where(d =>
-                    d.BloodDonor.User.FirstName.ToLower().Contains(lowerSearched) ||
-                    d.BloodDonor.User.LastName.ToLower().Contains(lowerSearched));
+                    string.Concat(d.BloodDonor.User.FirstName.ToLower(), " ", d.BloodDonor.User.LastName.ToLower()).Contains(lowerSearched));
             }
 
             //Филтриране
@@ -146,8 +145,14 @@ namespace BloodCenter.Controllers
 
         private async Task UpdateBloodSupply(int donorId, double quantity)
         {
+            // Гарантираме, че дареното количество е в интервала 405-450 мл
+            if (quantity < 405 || quantity > 450)
+            {
+                throw new Exception("Количеството дарена кръв трябва да бъде между 405 и 450 мл.");
+            }
+
             var donor = await _context.BloodDonors
-                .Include(d => d.BloodGroup) 
+                .Include(d => d.BloodGroup)
                 .FirstOrDefaultAsync(d => d.Id == donorId);
 
             if (donor == null)
@@ -158,20 +163,23 @@ namespace BloodCenter.Controllers
             var supply = await _context.Supplies
                 .FirstOrDefaultAsync(s => s.BloodGroupId == donor.BloodGroupId && s.RhesusFactor == donor.RhesusFactor);
 
+            // Преобразуваме количеството в сакове (1 сак = 405-450 мл)
+            int bloodBags = 1;
+
             if (supply != null)
             {
-                // Ако има запис за тази кръвна група и резус-фактор, увеличаваме количеството
-                supply.Quantity += quantity;
+                // Ако има запис, увеличаваме наличното количество с 1 сак
+                supply.Quantity += bloodBags;
                 supply.LastUpdated = DateTime.Now;
             }
             else
             {
-                // Ако няма такъв запис, създаваме нов
+                // Ако няма запис, създаваме нов със стартова стойност 1 сак
                 var newSupply = new Supply
                 {
                     BloodGroupId = donor.BloodGroupId,
                     RhesusFactor = donor.RhesusFactor,
-                    Quantity = quantity,
+                    Quantity = bloodBags,
                     LastUpdated = DateTime.Now
                 };
                 await _context.Supplies.AddAsync(newSupply);
@@ -179,6 +187,7 @@ namespace BloodCenter.Controllers
 
             await _context.SaveChangesAsync();
         }
+
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]

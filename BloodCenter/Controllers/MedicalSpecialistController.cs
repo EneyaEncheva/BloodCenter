@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace BloodCenter.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class MedicalSpecialistController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -34,8 +34,7 @@ namespace BloodCenter.Controllers
             if (!string.IsNullOrEmpty(searched))
             {
                 model = model.Where(bd =>
-                    bd.FirstName.Contains(searched) ||
-                    bd.LastName.Contains(searched));
+                    string.Concat(bd.FirstName, " ", bd.LastName).Contains(searched));
             }
 
             ViewData["Searched"] = searched;
@@ -162,6 +161,19 @@ namespace BloodCenter.Controllers
             }
 
             return RedirectToAction("MedicalSpecialist");
+        }
+
+        [Authorize(Roles = "Admin, MedicalSpecialist")]
+        public async Task<IActionResult> MyProfileMed()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // ID на текущия потребител
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return NotFound("Потребителят не е намерен.");
+            }
+            return View(user);
         }
     }
 }

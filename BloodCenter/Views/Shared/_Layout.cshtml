@@ -4,9 +4,16 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Кръводарителски център</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BloodCenter.styles.css" asp-append-version="true" />
+
+    <link rel="icon" type="image/png" href="~/bloodIcon.png">
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -17,17 +24,18 @@
         }
 
         .navbar-brand, .nav-link {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
             color: white !important;
         }
 
             .navbar-brand:hover, .nav-link:hover {
-                color: #2f0cf5 !important;
+                color: black !important;
             }
 
         .footer {
             background-color: #343a40;
             color: white;
-            padding: 20px 0;
             text-align: center;
         }
 
@@ -41,11 +49,15 @@
                 }
     </style>
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Кръводарителски център</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/bloodIcon.png" alt="Икона" style="width: 30px; height: 30px; margin-right: 10px;" />
+                    Кръводарителски център
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -53,39 +65,54 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Начало</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Поверителност</a>
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")"
+                               asp-controller="Home" asp-action="Index">Начало</a>
                         </li>
                         @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="AdminPanel">Кръводарители</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Statistics" ? "active" : "")"
+                                asp-controller="Home" asp-action="Statistics">Статистики</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")"
+                                   asp-controller="Admin" asp-action="AdminPanel">Кръводарители</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist">Медицински специалисти</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MedicalSpecialist" ? "active" : "")"
+                                   asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist">Медицински специалисти</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="DonationHistory" asp-action="History">Дарения</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DonationHistory" ? "active" : "")"
+                                   asp-controller="DonationHistory" asp-action="History">Дарения</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Supply" asp-action="BloodInventory">Наличности</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Supply" ? "active" : "")"
+                                   asp-controller="Supply" asp-action="BloodInventory">Наличности</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="Requests" asp-action="Index">Заявки</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Requests" ? "active" : "")"
+                                   asp-controller="Requests" asp-action="Index">Заявки</a>
                             </li>
                         }
                         @if (User.IsInRole("Donor"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="DonationHistory" asp-action="MyDonations">Моите дарения</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DonationHistory" ? "active" : "")"
+                                   asp-controller="DonationHistory" asp-action="MyDonations">Моите дарения</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "MyProfile" ? "active" : "")"
+                                   asp-controller="Admin" asp-action="MyProfile">Моят профил</a>
                             </li>
                         }
                     </ul>
@@ -94,19 +121,20 @@
             </div>
         </nav>
     </header>
+
     <p></p>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    @* <footer class="footer mt-4">
+    <footer class="footer mt-4">
         <div class="row">
             <div class="container">
-                &copy; 2025 - Кръводарителски център - <a asp-area="" asp-controller="Home" asp-action="Privacy">Поверителност</a>
+                &copy; 2025 - Кръводарителски център@*  - <a asp-area="" asp-controller="Home" asp-action="Privacy">Поверителност</a> *@
             </div>
         </div>
-    </footer> *@
+    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
