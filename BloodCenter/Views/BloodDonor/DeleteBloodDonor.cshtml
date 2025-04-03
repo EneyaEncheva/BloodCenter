@@ -1,0 +1,40 @@
+﻿@model BloodCenter.Models.ViewModels.BloodDonorViewModel
+
+@{
+    ViewData["Title"] = "Изтриване на кръводарител";
+}
+
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center text-danger fw-bold">@ViewData["Title"]</h2>
+            <p class="text-center text-muted">Сигурни ли сте, че искате да изтриете този кръводарител?</p>
+            <div class="profile-info">
+                <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
+                <p><strong>Потребителско име:</strong> @Model.UserName</p>
+                <p><strong>Електронна поща:</strong> @Model.Email</p>
+                <p><strong>Възраст:</strong> @Model.Age години</p>
+                <p><strong>Кръвна група:</strong> @Model.BloodGroupName</p>
+                <p><strong>Резус-фактор:</strong> @(Model.RhesusFactor == '+' ? "Положителен (+)" : "Отрицателен (-)")</p>
+                <p><strong>Контакти:</strong> @Model.Contacts</p>
+            </div>
+
+            <form asp-action="DeleteConfirmed" method="post" asp-antiforgery="true" class="mt-4 text-center">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Password" />
+                <button type="submit" class="btn btn-danger me-2">Изтрий</button>
+                <a asp-action="Index" asp-controller="BloodDonor" class="btn btn-secondary">Отказ</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-info p {
+        font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+</style>

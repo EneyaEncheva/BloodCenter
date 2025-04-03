@@ -7,7 +7,10 @@
             <h1>Кръводарители</h1>
         </div>
 
-        <a class="text-white btn btn-info" asp-area="" asp-controller="Admin" asp-action="AddBloodDonor">Добави кръводарител</a>
+        <a class="btn btn-outline-primary" asp-area="" asp-controller="BloodDonor" asp-action="AddBloodDonor">
+            <i class="bi bi-plus"></i> Добави кръводарител
+        </a>
+        <p></p>
 
         <div class="card p-3 mb-4">
             <form method="get">
@@ -37,7 +40,7 @@
                     </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-dark">Търси</button>
-                        <a asp-action="AdminPanel" class="btn btn-secondary">Изчисти</a>
+                        <a asp-action="Index" class="btn btn-secondary">Изчисти</a>
                     </div>
                 </div>
             </form>
@@ -77,8 +80,10 @@
                             <td>@bloodDonor.RhesusFactor</td>
                             <td>@bloodDonor.Contacts</td>
                             <td>
-                                <a class="btn btn-outline-primary" asp-controller="Admin" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">Редактиране</a>
-                                <a class="btn btn-outline-danger" asp-controller="Admin" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">Изтриване</a>
+                                <a class="btn btn-outline-primary" asp-controller="BloodDonor" asp-action="EditBloodDonor" asp-route-id="@bloodDonor.Id">
+                                    <i class="bi bi-pencil-fill"></i> Редактирай</a>
+                                <a class="btn btn-outline-danger" asp-controller="BloodDonor" asp-action="DeleteBloodDonor" asp-route-id="@bloodDonor.Id">
+                                    <i class="bi bi-trash-fill"></i> Изтрий</a>
                             </td>
                         </tr>
                     }
@@ -92,19 +97,19 @@
             @if (Model.HasPreviousPage)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@(Model.PageIndex - 1)">Предишна</a>
+                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)">Предишна</a>
                 </li>
             }
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@i">@i</a>
+                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@i">@i</a>
                 </li>
             }
             @if (Model.HasNextPage)
             {
                 <li class="page-item">
-                    <a class="page-link" asp-action="AdminPanel" asp-route-pageIndex="@(Model.PageIndex + 1)">Следваща</a>
+                    <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)">Следваща</a>
                 </li>
             }
         </ul>

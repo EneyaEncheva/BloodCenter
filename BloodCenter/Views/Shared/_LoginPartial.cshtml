@@ -9,17 +9,22 @@
         @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
         {
             <li class="nav-item">
-                <a id="manage" class="nav-link text-dark" asp-controller="MedicalSpecialist" asp-action="MyProfileMed" title="Manage">
-                    Здравей, @User.Identity.Name!
+                <a id="manage" class="nav-link text-dark @(ViewContext.RouteData.Values["action"]?.ToString() == "MyProfileMed" ? "active" : "")"
+                   asp-controller="MedicalSpecialist" asp-action="MyProfileMed" title="Manage">
+                    Профил - @User.Identity.Name
                 </a>
             </li>
         }
         @if (User.IsInRole("Donor"))
         {
-            <li class="nav-item">
-                <a id="manage" class="nav-link text-dark" asp-controller="Admin" asp-action="MyProfile" title="Manage">
+            @* <li class="nav-item">
+                <a id="manage" class="nav-link text-dark" asp-controller="BloodDonor" asp-action="MyProfile" title="Manage">
                     Здравей, @User.Identity.Name!
                 </a>
+            </li> *@
+            <li class="nav-item">
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "BloodDonor" && ViewContext.RouteData.Values["action"]?.ToString() == "MyProfile" ? "active" : "")"
+                   asp-controller="BloodDonor" asp-action="MyProfile">Профил - @User.Identity.Name</a>
             </li>
         }
         
@@ -32,9 +37,6 @@
 }
 else
 {
-    @* <li class="nav-item">
-            <a class="nav-link text-dark" id="register" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
-    </li> *@
     <li class="nav-item">
         <a class="nav-link text-dark" id="login" asp-area="Identity" asp-page="/Account/Login">Вход</a>
     </li>

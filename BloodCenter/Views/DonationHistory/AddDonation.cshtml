@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="number" min="405" max="450" asp-for="Quantity" class="form-control" placeholder="Количество (мл)" />
+                    <input type="number" asp-for="Quantity" class="form-control" placeholder="Количество (мл)" />
                     <label for="Quantity">Количество (мл)</label>
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
@@ -29,3 +29,8 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,20 +1,33 @@
 ﻿@model DonationViewModel
-
 @{
     ViewData["Title"] = "Изтриване на дарение";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center text-danger fw-bold">@ViewData["Title"]</h2>
+            <p class="text-center text-muted">Сигурни ли сте, че искате да изтриете дарението?</p>
+            <div class="profile-info">
+                <p><strong>Количество:</strong> @Model.Quantity мл</p>
+                <p><strong>Дата на дарението:</strong> @Model.DonationDate</p>
+            </div>
 
-<h3>Сигурни ли сте, че искате да изтриете дарението?</h3>
-<p></p>
-<div>
-    <p><strong>Количество:</strong> @Model.Quantity</p>
-    <p><strong>Дата на дарението:</strong> @Model.DonationDate</p>
+            <form asp-action="DeleteConfirmedDonation" method="post" asp-route-id="@Model.BloodDonorId" asp-antiforgery="true" class="mt-4 text-center">
+                <button type="submit" class="btn btn-danger me-2">Изтрий</button>
+                <a asp-action="History" asp-controller="DonationHistory" class="btn btn-secondary">Отказ</a>
+            </form>
+        </div>
+    </div>
 </div>
 
-<form method="post" asp-action="DeleteConfirmedDonation" asp-route-id="@Model.BloodDonorId">
-    <button type="submit" class="btn btn-danger">Да, изтрий</button>
-    <a href="@Url.Action("History")" class="btn btn-secondary">Отказ</a>
-</form>
+<style>
+    .profile-info p {
+        font-size: 18px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+</style>
 

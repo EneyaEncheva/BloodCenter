@@ -7,6 +7,8 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -78,14 +80,14 @@
                         @if (User.IsInRole("Admin") || User.IsInRole("MedicalSpecialist"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")"
-                                   asp-controller="Admin" asp-action="AdminPanel">Кръводарители</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "BloodDonor" ? "active" : "")"
+                                   asp-controller="BloodDonor" asp-action="Index">Кръводарители</a>
                             </li>
                         }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MedicalSpecialist" ? "active" : "")"
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "MedicalSpecialist" ? "active" : "")"
                                    asp-controller="MedicalSpecialist" asp-action="MedicalSpecialist">Медицински специалисти</a>
                             </li>
                         }
@@ -96,8 +98,8 @@
                                    asp-controller="DonationHistory" asp-action="History">Дарения</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Supply" ? "active" : "")"
-                                   asp-controller="Supply" asp-action="BloodInventory">Наличности</a>
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Availability" ? "active" : "")"
+                                   asp-controller="Availability" asp-action="BloodInventory">Наличности</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Requests" ? "active" : "")"
@@ -110,10 +112,10 @@
                                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "DonationHistory" ? "active" : "")"
                                    asp-controller="DonationHistory" asp-action="MyDonations">Моите дарения</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "MyProfile" ? "active" : "")"
-                                   asp-controller="Admin" asp-action="MyProfile">Моят профил</a>
-                            </li>
+                           @*  <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "BloodDonor" && ViewContext.RouteData.Values["action"]?.ToString() == "MyProfile" ? "active" : "")"
+                                   asp-controller="BloodDonor" asp-action="MyProfile">Моят профил</a>
+                            </li> *@
                         }
                     </ul>
                     <partial name="_LoginPartial" />

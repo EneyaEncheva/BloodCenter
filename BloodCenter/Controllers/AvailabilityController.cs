@@ -7,18 +7,18 @@ using Microsoft.EntityFrameworkCore;
 namespace BloodCenter.Controllers
 {
     [Authorize(Roles = "Admin, MedicalSpecialist")]
-    public class SupplyController : Controller
+    public class AvailabilityController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SupplyController(ApplicationDbContext context)
+        public AvailabilityController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         public async Task<IActionResult> BloodInventory()
         {
-            var supplies = await _context.Supplies
+            var supplies = await _context.Availabilities
                 .Include(s => s.BloodGroup)
                 .ToListAsync();
 

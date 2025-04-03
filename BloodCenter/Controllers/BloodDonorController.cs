@@ -13,12 +13,12 @@ using System.Security.Claims;
 
 namespace BloodCenter.Controllers
 {
-    public class AdminController : Controller
+    public class BloodDonorController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
-        public AdminController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
+        public BloodDonorController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -27,7 +27,8 @@ namespace BloodCenter.Controllers
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
-        public async Task<IActionResult> AdminPanel(string searched, int? bloodGroupId, char? rhesusFactor, int pageIndex = 1)
+        public async Task<IActionResult> Index(string searched, int? bloodGroupId, 
+            char? rhesusFactor, int pageIndex = 1)
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
 
@@ -40,25 +41,29 @@ namespace BloodCenter.Controllers
             if (!string.IsNullOrEmpty(searched))
             {
                 bloodDonors = bloodDonors.Where(bd =>
-                    string.Concat(bd.User.FirstName, " ", bd.User.LastName).Contains(searched));
+                    string.Concat(bd.User.FirstName, " ", bd.User.LastName)
+                    .Contains(searched));
             }
 
             //Филтриране
             if (bloodGroupId.HasValue && bloodGroupId > 0)
             {
-                bloodDonors = bloodDonors.Where(x => x.BloodGroupId == bloodGroupId);
+                bloodDonors = bloodDonors
+                    .Where(x => x.BloodGroupId == bloodGroupId);
             }
 
             if (rhesusFactor.HasValue)
             {
-                bloodDonors = bloodDonors.Where(x => x.RhesusFactor == rhesusFactor.Value);
+                bloodDonors = bloodDonors
+                    .Where(x => x.RhesusFactor == rhesusFactor.Value);
             }
 
             //Странициране
-            const int pageSize = 7;
+            const int pageSize = 5;
 
             var donorsList = await bloodDonors.ToListAsync();
-            var paginatedDonors = PaginatedList<BloodDonors>.Create(donorsList, pageIndex, pageSize);
+            var paginatedDonors = PaginatedList<BloodDonors>
+                .Create(donorsList, pageIndex, pageSize);
 
             ViewData["Searched"] = searched;
             ViewData["BloodGroupId"] = bloodGroupId;
@@ -68,6 +73,7 @@ namespace BloodCenter.Controllers
         }
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
+        [HttpGet]
         public IActionResult AddBloodDonor()
         {
             ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name");
@@ -127,17 +133,17 @@ namespace BloodCenter.Controllers
                     await _context.SaveChangesAsync();
                 }
                 ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Name", "Name");
-                return RedirectToAction("AdminPanel", "Admin");
+                return RedirectToAction("Index", "BloodDonor");
             }
             return View(addBloodDonor);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
         public IActionResult EditBloodDonor(int id)
         {
             var bloodDonor = _context.BloodDonors
-                .Include(bd => bd.User) // Зареждаме потребителските данни
+                .Include(bd => bd.User)
                 .FirstOrDefault(bd => bd.Id == id);
 
             if (bloodDonor == null)
@@ -147,34 +153,32 @@ namespace BloodCenter.Controllers
 
             var viewModel = new BloodDonorViewModel
             {
-                Id = bloodDonor.Id, //???
+                Id = bloodDonor.Id,
                 UserName = bloodDonor.User.UserName,
                 Email = bloodDonor.User.Email,
                 FirstName = bloodDonor.User.FirstName,
                 LastName = bloodDonor.User.LastName,
                 Age = bloodDonor.Age,
-                //Password = "CANNOT BE NULL",
                 BloodGroupsId = bloodDonor.BloodGroupId,
                 RhesusFactor = bloodDonor.RhesusFactor,
                 Contacts = bloodDonor.Contacts
             };
-
-            ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name", bloodDonor.BloodGroupId);
+            ViewData["BloodGroups"] = new SelectList
+                (_context.BloodGroups, "Id", "Name", bloodDonor.BloodGroupId);
 
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpPost]
         public async Task<IActionResult> EditBloodDonor(BloodDonorViewModel model)
         {
             if (!ModelState.IsValid)
             {
-                ViewData["BloodGroups"] = new SelectList(_context.BloodGroups, "Id", "Name", model.BloodGroupsId);
-
+                ViewData["BloodGroups"] = new SelectList
+                    (_context.BloodGroups, "Id", "Name", model.BloodGroupsId);
                 return View(model);
             }
-
             var bloodDonor = _context.BloodDonors
                 .Include(bd => bd.User)
                 .FirstOrDefault(bd => bd.Id == model.Id);
@@ -183,36 +187,31 @@ namespace BloodCenter.Controllers
             {
                 return NotFound();
             }
-
-            //Проверка за съществуващо потребителско име, но не проверяваме текущото
             var existingUserName = await _userManager.FindByNameAsync(model.UserName);
+
             if (existingUserName != null && existingUserName.Id != bloodDonor.UserId)
             {
                 ModelState.AddModelError("UserName", "Това потребителско име вече съществува!");
                 return View(model);
             }
-
-            //Проверка за съществуващ имейл, но не проверяваме текущия
             var existingEmail = await _userManager.FindByEmailAsync(model.Email);
+
             if (existingEmail != null && existingEmail.Id != bloodDonor.UserId)
             {
                 ModelState.AddModelError("Email", "Този имейл вече се използва!");
                 return View(model);
             }
-
-            // Обновяване на потребителските данни
             bloodDonor.User.UserName = model.UserName;
             bloodDonor.User.Email = model.Email;
             bloodDonor.User.FirstName = model.FirstName;
             bloodDonor.User.LastName = model.LastName;
+
             if (model.NewPassword != null)
             {
                 await _userManager.RemovePasswordAsync(bloodDonor.User);
                 await _userManager.AddPasswordAsync(bloodDonor.User, model.NewPassword);
 
             }
-
-            // Обновяване на кръводарителя
             bloodDonor.Age = model.Age;
             bloodDonor.BloodGroupId = model.BloodGroupsId;
             bloodDonor.RhesusFactor = model.RhesusFactor;
@@ -222,10 +221,10 @@ namespace BloodCenter.Controllers
             _context.BloodDonors.Update(bloodDonor);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("AdminPanel", "Admin");
+            return RedirectToAction("Index", "BloodDonor");
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpGet]
         public IActionResult DeleteBloodDonor(int id)
         {
@@ -255,7 +254,7 @@ namespace BloodCenter.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -269,10 +268,10 @@ namespace BloodCenter.Controllers
             }
 
             _context.BloodDonors.Remove(bloodDonor);
-            _context.Users.Remove(bloodDonor.User); // Изтриваме и свързания потребител
+            _context.Users.Remove(bloodDonor.User);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("AdminPanel", "Admin");
+            return RedirectToAction("Index", "BloodDonor");
         }
 
         [Authorize(Roles = "Donor")]
@@ -291,5 +290,6 @@ namespace BloodCenter.Controllers
             }
 
             return View(donor);
-        }    }
+        }
+    }
 }

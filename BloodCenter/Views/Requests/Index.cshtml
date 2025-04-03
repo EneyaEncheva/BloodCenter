@@ -5,8 +5,10 @@
         <h1>Заявки</h1>
     </div>
 
-    <a class="text-white btn btn-info" asp-area="" asp-controller="Requests" asp-action="Create">Прати заявка</a>
-
+    <a class="btn btn-outline-primary" asp-area="" asp-controller="Requests" asp-action="Add">
+        <i class="bi bi-plus"></i> Изпрати заявка
+    </a>
+    <p></p>
 
     <div class="card p-3 mb-4">
         <form method="get">
@@ -89,7 +91,8 @@
                 {
                     <tr>
                         <td>@request.Hospital</td>
-                        <td>@(request.BloodGroup != null ? request.BloodGroup.Name : "Няма данни")</td>
+                        <td>@(request.BloodGroup != null ? request.BloodGroup.Name : 
+                            "Няма данни")</td>
                         <td>@request.RhesusFactor</td>
                         <td>@request.Quantity</td>
                         <td>@request.Date.ToShortDateString()</td>
@@ -98,10 +101,13 @@
                         <td>
                             @if (request.Status == "В процес на изпълнение")
                             {
-                                <form asp-action="UpdateStatus" method="post" class="d-flex gap-2">
+                                <form asp-action="UpdateStatus" method="post" 
+                                    class="d-flex gap-2">
                                     <input type="hidden" name="id" value="@request.Id">
-                                    <button type="submit" name="status" value="Одобрена" class="btn btn-success">Одобри</button>
-                                    <button type="submit" name="status" value="Отхвърлена" class="btn btn-danger">Откажи</button>
+                                    <button type="submit" name="status" value="Одобрена" 
+                                        class="btn btn-outline-success">Одобри</button>
+                                    <button type="submit" name="status" value="Отхвърлена" 
+                                        class="btn btn-outline-danger">Откажи</button>
                                 </form>
                             }
                         </td>

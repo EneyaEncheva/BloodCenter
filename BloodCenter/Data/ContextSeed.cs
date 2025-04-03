@@ -33,11 +33,7 @@ namespace BloodCenter.Data
             if (foundUser == null)
             {
                 await userManager.CreateAsync(admin, "abcdef");
-
-                //await userManager.AddToRoleAsync(defaultUser, Role.Donor.ToString());
-                //await userManager.AddToRoleAsync(defaultUser, Role.MedicalSpecialist.ToString());
                 await userManager.AddToRoleAsync(admin, Role.Admin.ToString());
-
             }
         }
     }

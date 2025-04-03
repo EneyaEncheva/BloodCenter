@@ -68,38 +68,46 @@ namespace BloodCenter.Controllers
 
         //[Authorize(Roles = "MedicalSpecialist")]
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Add()
         {
             ViewBag.BloodGroups = new SelectList(_context.BloodGroups, "Id", "Name");
 
             var rhesusFactors = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "+", Text = "Положителен (+)" },
-                new SelectListItem { Value = "-", Text = "Отрицателен (-)" }
-            };
+    {
+        new SelectListItem { Value = "+", Text = "Положителен (+)" },
+        new SelectListItem { Value = "-", Text = "Отрицателен (-)" }
+    };
 
             ViewBag.RhesusFactors = rhesusFactors;
-            return View();
+            return View(new Requests());
         }
 
-        //[Authorize(Roles = "MedicalSpecialist")]
         [HttpPost]
-        public async Task<IActionResult> Create(Requests request)
+        public async Task<IActionResult> Add(Requests request)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                request.RequestedById = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                request.Status = "В процес на изпълнение";
+                // Ако има грешки във валидацията, презареди падащите менюта
+                ViewBag.BloodGroups = new SelectList(_context.BloodGroups, "Id", "Name");
 
-                _context.Requests.Add(request);
-                await _context.SaveChangesAsync();
+                ViewBag.RhesusFactors = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "+", Text = "Положителен (+)" },
+            new SelectListItem { Value = "-", Text = "Отрицателен (-)" }
+        };
 
-                return RedirectToAction("Index");
+                return View(request);
             }
 
-            ViewBag.BloodGroups = new SelectList(_context.BloodGroups, "Id", "Name");
-            return View(request);
+            request.RequestedById = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            request.Status = "В процес на изпълнение";
+
+            _context.Requests.Add(request);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
+
 
         //[Authorize(Roles = "MedicalSpecialist")]
         public async Task<IActionResult> ApproveRequests()
@@ -119,7 +127,7 @@ namespace BloodCenter.Controllers
 
             if (status == "Одобрена")
             {
-                var supply = await _context.Supplies
+                var supply = await _context.Availabilities
                     .FirstOrDefaultAsync(s => s.BloodGroupId == request.BloodGroupId && s.RhesusFactor == request.RhesusFactor);
 
                 if (supply != null && supply.Quantity >= request.Quantity)
@@ -131,7 +139,7 @@ namespace BloodCenter.Controllers
                 else
                 {
                     // Ако няма достатъчно кръв от търсената група, проверяваме 0-
-                    var universalDonor = await _context.Supplies
+                    var universalDonor = await _context.Availabilities
                         .FirstOrDefaultAsync(s => s.BloodGroup.Name == "0" && s.RhesusFactor == '-');
 
                     if (universalDonor != null && universalDonor.Quantity >= request.Quantity)

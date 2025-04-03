@@ -106,10 +106,8 @@ namespace BloodCenter.Controllers
                 })
                 .ToList();
 
-            return View();
+            return View(new DonationViewModel());
         }
-
-
 
         [Authorize(Roles = "Admin, MedicalSpecialist")]
         [HttpPost]
@@ -117,7 +115,16 @@ namespace BloodCenter.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewData["BloodDonors"] = new SelectList(_context.BloodDonors.Include(d => d.User), "Id", "User.FirstName");
+                ViewBag.BloodDonors = _context.BloodDonors
+                    .Include(d => d.User)
+                    .Include(d => d.BloodGroup)
+                    .Select(d => new SelectListItem
+                    {
+                        Value = d.Id.ToString(),
+                        Text = $"{d.User.FirstName} {d.User.LastName} ({d.BloodGroup.Name}{d.RhesusFactor})"
+                    })
+                    .ToList();
+
                 return View(model);
             }
 
@@ -125,10 +132,11 @@ namespace BloodCenter.Controllers
 
             if (donor == null)
             {
-                return NotFound("Кръводарителят не е намерен.");
+                ModelState.AddModelError("", "Кръводарителят не е намерен.");
+                return View(model);
             }
 
-            // Добавяне на дарение в историята
+            // Записване в историята на даренията
             DonationHistory donation = new DonationHistory
             {
                 BloodDonorId = donor.Id,
@@ -140,8 +148,10 @@ namespace BloodCenter.Controllers
             await _context.SaveChangesAsync();
 
             await UpdateBloodSupply(donor.Id, model.Quantity);
+
             return RedirectToAction("History", "DonationHistory");
         }
+
 
         private async Task UpdateBloodSupply(int donorId, double quantity)
         {
@@ -160,7 +170,7 @@ namespace BloodCenter.Controllers
                 throw new Exception("Кръводарителят не съществува.");
             }
 
-            var supply = await _context.Supplies
+            var supply = await _context.Availabilities
                 .FirstOrDefaultAsync(s => s.BloodGroupId == donor.BloodGroupId && s.RhesusFactor == donor.RhesusFactor);
 
             // Преобразуваме количеството в сакове (1 сак = 405-450 мл)
@@ -175,14 +185,14 @@ namespace BloodCenter.Controllers
             else
             {
                 // Ако няма запис, създаваме нов със стартова стойност 1 сак
-                var newSupply = new Supply
+                var newSupply = new Availability
                 {
                     BloodGroupId = donor.BloodGroupId,
                     RhesusFactor = donor.RhesusFactor,
                     Quantity = bloodBags,
                     LastUpdated = DateTime.Now
                 };
-                await _context.Supplies.AddAsync(newSupply);
+                await _context.Availabilities.AddAsync(newSupply);
             }
 
             await _context.SaveChangesAsync();

@@ -1,0 +1,65 @@
+﻿@model Requests
+
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 500px; width: 100%; 
+            border-radius: 15px;">
+        <div class="card-body">
+            <h2 class="text-center text-danger fw-bold">Подаване на заявка</h2>
+            <p class="text-center text-muted">Попълнете данните по-долу</p>
+
+            <form asp-action="Add">
+                <div class="form-group mb-3">
+                    <label>Лечебно заведение</label>
+                    <input type="text" class="form-control" 
+                        value="Университетска болница" readonly>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="BloodGroupsId">Кръвна група</label>
+                    @if (ViewBag.BloodGroups != null)
+                    {
+                        <select asp-for="BloodGroupId" asp-items="ViewBag.BloodGroups" 
+                            class="form-control">
+                            <option value="">-- Изберете кръвна група --</option>
+                        </select>
+                        <span asp-validation-for="BloodGroupId" 
+                            class="text-danger"></span>
+
+                    }
+                    else
+                    {
+                        <p class="text-danger">Няма налични кръвни групи.</p>
+                    }
+                </div>
+                <div class="form-group">
+                    <label asp-for="RhesusFactor">Резус-фактор</label>
+                    <select asp-for="RhesusFactor" asp-items="ViewBag.RhesusFactors" 
+                        class="form-control">
+                        <option value="">-- Изберете резус фактор --</option>
+                    </select>
+                    <span asp-validation-for="RhesusFactor" 
+                        class="text-danger"></span>
+                </div>
+                <p></p>
+                <div class="form-group mb-3">
+                    <label asp-for="Quantity">Количество (сак)</label>
+                    <input type="number" asp-for="Quantity" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+                <p></p>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger shadow-sm">
+                        Подай заявка</button>
+                    <a asp-action="Index" asp-controller="Requests" 
+                        class="btn btn-secondary">Отказ</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -7,7 +7,10 @@
             <h1>История на даренията</h1>
         </div>
 
-        <a class="btn btn-info text-white mb-3" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">Добави дарение</a>
+        <a class="btn btn-outline-primary" asp-area="" asp-controller="DonationHistory" asp-action="AddDonation">
+            <i class="bi bi-plus"></i> Добави дарение
+        </a>
+        <p></p>
 
         <!-- Филтър -->
         <div class="card p-3 mb-4">
@@ -98,7 +101,9 @@
                             <td>@donationHistory.DonationDate.ToShortDateString()</td>
                             <td>@donationHistory.Quantity мл</td>
                             <td>
-                                <a class="btn btn-outline-danger btn-sm" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">Изтриване</a>
+                                <a class="btn btn-outline-danger" asp-controller="DonationHistory" asp-action="DeleteDonation" asp-route-id="@donationHistory.Id">
+                                    <i class="bi bi-trash-fill"></i> Изтрий
+                                </a>
                             </td>
                         </tr>
                     }

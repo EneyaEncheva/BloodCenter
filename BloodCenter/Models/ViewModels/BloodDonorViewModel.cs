@@ -5,23 +5,11 @@ namespace BloodCenter.Models.ViewModels
 {
     public class BloodDonorViewModel : UserViewModel
     {
-        //??? Зa id, username........
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Потребителско име")]
-        public string UserName { get; set; }
-
-        [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Имейл")]
-        [EmailAddress(ErrorMessage = "Невалиден имейл адрес!")]
-        public string Email { get; set; }
-
-        [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Име")]
-        public string FirstName { get; set; }
-
-        [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Фамилия")]
-        public string LastName { get; set; }
-
+        [Range(18, 65, ErrorMessage = "Възрастта трябва да е между 18 и 65 години.")]
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Възраст")]
+
         public int Age { get; set; }
 
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Кръвна група")]
@@ -32,6 +20,7 @@ namespace BloodCenter.Models.ViewModels
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Резус-фактор")]
         public char RhesusFactor { get; set; }
 
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Моля, въведете телефонен номер с точно 10 цифри.")]
         [Required(ErrorMessage = "Това поле е задължително."), Display(Name = "Контакти")]
         public string Contacts { get; set; }
 

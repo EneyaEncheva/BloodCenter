@@ -1,4 +1,4 @@
-﻿<section class="section-container">
+﻿<section class="section-container-supply">
     <div class="container-text">
         <h1>Наличности на кръв</h1>
     </div>
@@ -14,7 +14,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model == null || !(Model as List<Supply>)?.Any() == true)
+                @if (Model == null || !(Model as List<Availability>)?.Any() == true)
                 {
                     <tr>
                         <td colspan="9" class="text-center text-danger">Няма наличности.</td>

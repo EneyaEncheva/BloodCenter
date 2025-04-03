@@ -12,14 +12,12 @@
             <form asp-action="AddBloodDonor">
                 <div asp-validation-summary="ModelOnly" class="text-danger text-center" role="alert"></div>
 
-                <!-- Потребителско име -->
                 <div class="form-floating mb-3">
                     <input asp-for="UserName" class="form-control" autocomplete="username" placeholder="Потребителско име" />
                     <label asp-for="UserName">Потребителско име</label>
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
-                <!-- Имена (на един ред) -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
@@ -37,7 +35,6 @@
                     </div>
                 </div>
 
-                <!-- Имейл и парола (на един ред) -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-floating mb-3">
@@ -55,14 +52,12 @@
                     </div>
                 </div>
 
-                <!-- Възраст -->
                 <div class="form-floating mb-3">
-                    <input asp-for="Age" type="number" min="18" max="65" class="form-control" placeholder="Възраст" />
+                    <input asp-for="Age" type="number" class="form-control" placeholder="Възраст" />
                     <label asp-for="Age">Възраст</label>
                     <span asp-validation-for="Age" class="text-danger"></span>
                 </div>
 
-                <!-- Кръвна група и резус-фактор (на един ред) -->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -84,17 +79,15 @@
                     </div>
                 </div>
 
-                <!-- Контакти -->
                 <div class="form-floating mb-3">
                     <input asp-for="Contacts" class="form-control" autocomplete="contact" placeholder="Контакти" />
                     <label asp-for="Contacts">Контакти</label>
                     <span asp-validation-for="Contacts" class="text-danger"></span>
                 </div>
 
-                <!-- Бутоните за регистрация и отказ -->
                 <div class="text-center">
                     <button type="submit" class="btn btn-danger shadow-sm">Регистрация</button>
-                    <a asp-action="AdminPanel" asp-controller="Admin" class="btn btn-secondary">Отказ</a>
+                    <a asp-action="Index" asp-controller="BloodDonor" class="btn btn-secondary">Отказ</a>
                 </div>
             </form>
         </div>

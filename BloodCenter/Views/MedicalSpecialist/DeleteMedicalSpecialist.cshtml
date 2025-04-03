@@ -1,25 +1,26 @@
 ﻿@model ApplicationUser
 
 @{
-    ViewData["Title"] = "Изтриване на медициснки лице";
+    ViewData["Title"] = "Изтриване на медицинско лице";
 }
 
-<div class="container mt-4">
-    <h1 class="text-danger">@ViewData["Title"]</h1>
-    <h3 class="text-muted">Сигурни ли сте, че искате да изтриете този кръводарител?</h3>
-
-    <div class="card shadow-lg border-danger">
+<div class="d-flex justify-content-center align-items-center mt-4">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 15px;">
         <div class="card-body">
-            <p class ="card-text"><strong>Потребителско име:</strong> @Model.UserName</p>
-            <p class="card-text"><strong>Електронна поща:</strong> @Model.Email</p>
-            <p class="card-text"><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
+            <h2 class="text-center text-danger fw-bold">@ViewData["Title"]</h2>
+            <p class="text-center text-muted">Сигурни ли сте, че искате да изтриете този кръводарител?</p>
+            <div class="profile-info">
+                <p><strong>Потребителско име:</strong> @Model.UserName</p>
+                <p><strong>Електронна поща:</strong> @Model.Email</p>
+                <p><strong>Име:</strong> @Model.FirstName @Model.LastName</p>
+            </div>
+
+            <form asp-action="DeleteConfirmedMs" method="post" asp-antiforgery="true" class="mt-4 text-center">
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <input type="hidden" asp-for="PasswordHash" value="@Model.PasswordHash" />
+                <button type="submit" class="btn btn-danger shadow-sm">Изтрий</button>
+                <a asp-action="MedicalSpecialist" asp-controller="MedicalSpecialist" class="btn btn-secondary">Отказ</a>
+            </form>
         </div>
     </div>
-
-    <form asp-action="DeleteConfirmedMs" method="post" asp-antiforgery="true" class="mt-4">
-        <input type="hidden" asp-for="Id" value="@Model.Id" />
-        <input type="hidden" asp-for="PasswordHash" value="@Model.PasswordHash" />
-        <button type="submit" class="btn btn-danger me-2">Изтрий</button>
-        <a asp-action="MedicalSpecialist" asp-controller="MedicalSpecialist" class="btn btn-secondary">Отказ</a>
-    </form>
 </div>

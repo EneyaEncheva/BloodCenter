@@ -7,7 +7,10 @@
             <h1>Медицински специалисти</h1>
         </div>
 
-        <a class="text-white btn btn-info" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">Добави медицински специалист</a>
+        <a class="btn btn-outline-primary" asp-area="" asp-controller="MedicalSpecialist" asp-action="AddMedicalSpecialist">
+            <i class="bi bi-plus"></i> Добави медицински специалист
+        </a>
+        <p></p>
 
         <div class="card p-3 mb-4">
             <form method="get">
@@ -50,9 +53,14 @@
                             <td>@medicalSpecialist.FirstName</td>
                             <td>@medicalSpecialist.LastName</td>
                             <td>
-                                <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Редактиране</a>
-                                <a class="btn btn-outline-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">Изтриване</a>
+                                <a class="btn btn-outline-primary" asp-controller="MedicalSpecialist" asp-action="EditMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">
+                                    <i class="bi bi-pencil-fill"></i> Редактирай
+                                </a>
+                                <a class="btn btn-outline-danger" asp-controller="MedicalSpecialist" asp-action="DeleteMedicalSpecialist" asp-route-id="@medicalSpecialist.Id">
+                                    <i class="bi bi-trash-fill"></i> Изтрий
+                                </a>
                             </td>
+
                         </tr>
                     }
                 }
